@@ -69,7 +69,7 @@ Resources:
       InstanceTenancy: !Ref InstanceTenancy
       Tags:
         - Key: EnvironmentId
-        Value: !Ref EnvironmentId
+          Value: !Ref EnvironmentId
         - Key: Contact
           Value: !Ref Contact
         - Key: ProjectId
