@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description:
+  CloudFormation template primitive which creates a Microsoft AD Directory Service. Intended to be used as part of a nested CloudFormation template to create one or more AD domains.
+
+Metadata: 
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - Label: 
+          default: Directory Service Configuration
+        Parameters: 
+          - VpcId
+          - Name
+          - ShortName
+          - Password
+          - SubnetId1
+          - SubnetId2
+
+Parameters:
+  VpcId:
+    Description: Deploy to which VPC
+    Type: AWS::EC2::VPC::Id
+  Name:
+    Type: String
+    Default: DNSName
+  ShortName:
+    Type: String
+    Default: ShortName
+  Password:
+    Type: String
+    NoEcho: true
+  SubnetId1:
+    Description: Subnet 1
+    Type: AWS::EC2::Subnet::Id
+  SubnetId2:
+    Description: Subnet 2
+    Type: AWS::EC2::Subnet::Id
+Resources:
+  MyDirectory:
+    Type: "AWS::DirectoryService::MicrosoftAD"
+    Properties:
+      Name: !Ref Name
+      ShortName: !Ref ShortName
+      Password: !Ref Password
+      VpcSettings:
+        SubnetIds:
+          - !Ref SubnetId1
+          - !Ref SubnetId2
+        VpcId: !Ref VpcId
+
+Outputs:
+  MyDirectoryId:
+    Description: The ID of the directory
+    Value: !Ref MyDirectory
+    Export:
+      Name: !Sub ${AWS::StackName}-${ShortName}
