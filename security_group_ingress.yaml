@@ -14,27 +14,8 @@ Metadata:
           - IpProtocol
           - FromPort
           - ToPort
-      - Label:
-          default: Environment and Tags
-        Parameters:
-          - EnvironmentId
-          - Contact
-          - ProjectId
-          - ProjectData
 
 Parameters:
-  EnvironmentId:
-    Type: String
-    Default: dev
-  Contact:
-    Type: String
-    Default: Name
-  ProjectId:
-    Type: String
-    Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=DEV
   GroupId:
     Description: GroupId with which to apply this ingress rule.
     Type: String
