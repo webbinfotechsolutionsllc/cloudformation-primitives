@@ -8,8 +8,10 @@ Metadata:
       - Label:
           default: Network Parameters
         Parameters:
-          - VpcId
           - CidrBlock
+          - EnableDnsSupport
+          - EnableDnsHostnames
+          - InstanceTenancy
       - Label:
           default: Environment and Tags
         Parameters:
@@ -17,7 +19,6 @@ Metadata:
           - Contact
           - ProjectId
           - ProjectData
-          - ShortName
 
 Parameters:
   EnvironmentId:
