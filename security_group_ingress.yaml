@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Security group ingress rule template primitive.
+
+Metadata: 
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - Label: 
+          default: Parameters
+        Parameters: 
+          - GroupId
+          - CidrIp
+          - SourceSecurityGroupId
+          - IpProtocol
+          - FromPort
+          - ToPort
+      - Label:
+          default: Environment and Tags
+        Parameters:
+          - EnvironmentId
+          - Contact
+          - ProjectId
+          - ProjectData
+
+Parameters:
+  EnvironmentId:
+    Type: String
+    Default: dev
+  Contact:
+    Type: String
+    Default: Name
+  ProjectId:
+    Type: String
+    Default: ProjectId
+  ProjectData:
+    Type: String
+    Default: env=DEV
+  GroupId:
+    Description: GroupId with which to apply this ingress rule.
+    Type: String
+  CidrIp:
+    Description: If the source is a CIDR block, enter it here. If not, leave the value at None and fill in the SourceSecurityGroupId field.
+    Type: String
+    Default: "None"
+  SourceSecurityGroupId:
+    Description: If the source is a security group, enter it here. If not, leave the value at None and fill in the CidrIp field.
+    Type: String
+    Default: "None"
+  IpProtocol:
+    Description: Ingress rule IP Protocol. Allowed values are tcp, udp, or icmp.
+    Type: String
+    Default: tcp
+    AllowedValues: 
+      - tcp
+      - udp
+      - icmp
+  FromPort:
+    Description: Ingress rule FromPort.
+    Type: Number
+    Default: 443
+    MinValue: 0
+    MaxValue: 65535
+  ToPort:
+    Description: Ingress rule ToPort.
+    Type: Number
+    Default: 443
+    MinValue: 0
+    MaxValue: 65535
+Conditions:
+  HasSourceSecurityGroupId: !Not [!Equals [!Ref SourceSecurityGroupId, "None"]]
+  HasCidrIp: !Not [!Equals [!Ref CidrIp, "None"]]
+Resources:
+  SecurityGroupIngressFromSourceGroup:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Condition: HasSourceSecurityGroupId
+    Properties:
+      IpProtocol: !Ref IpProtocol
+      GroupId: !Ref GroupId
+      FromPort: !Ref FromPort
+      SourceSecurityGroupId: !Ref SourceSecurityGroupId
+      ToPort: !Ref ToPort
+  SecurityGroupIngressFromCidrIp:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Condition: HasCidrIp
+    Properties:
+      IpProtocol: !Ref IpProtocol
+      GroupId: !Ref GroupId
+      FromPort: !Ref FromPort
+      CidrIp: !Ref CidrIp
+      ToPort: !Ref ToPort
