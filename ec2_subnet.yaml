@@ -78,8 +78,8 @@ Resources:
           Value: !Ref ProjectData
 
 Outputs:
-  MyVpcId:
+  MySubnetId:
     Description: The ID of the subnet
     Value: !Ref MySubnet
     Export:
-      Name: !Sub "${AWS::StackName}-VPCID"
+      Name: !Sub "${AWS::StackName}-SubnetID"
