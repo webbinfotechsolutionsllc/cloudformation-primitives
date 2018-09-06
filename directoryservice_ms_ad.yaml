@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Description:
-  CloudFormation template primitive which creates a Microsoft AD Directory Service. Used with nested CloudFormation templates.
+  CloudFormation template primitive which creates a Microsoft AD Directory Service.
 
 Metadata: 
   AWS::CloudFormation::Interface: 
