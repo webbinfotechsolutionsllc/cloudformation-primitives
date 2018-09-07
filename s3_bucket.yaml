@@ -50,7 +50,7 @@ Parameters:
       - PublicReadWrite
     Type: String
     Default: Private
-  AccelerateConfiguration:
+  AccelerationStatus:
     Description: Sets S3 bucket acceleration status. Default should be Suspended. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-accelerateconfiguration.html
     AllowedValues:
       - Enabled
@@ -77,13 +77,6 @@ Parameters:
       - Suspended
     Type: String
     Default: Enabled
-  DeletionPolicy:
-    Description: Sets CloudFormation deletion policy. Default is Delete. Bucket must not contain any objects for Delete to succeed. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket-versioningconfig.html
-    AllowedValues:
-      - Retain
-      - Delete
-    Type: String
-    Default: Delete
 
 Conditions:
   HasBucketName: !Not [!Equals [!Ref BucketName, ""]]
@@ -95,7 +88,7 @@ Resources:
     Properties: 
       AccessControl: !Ref AccessControl
       AccelerateConfiguration:
-        AccelerationStatus: !Ref AccelerateStatus
+        AccelerationStatus: !Ref AccelerationStatus
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -103,8 +96,6 @@ Resources:
               SSEAlgorithm: !Ref SseAlgorithm
       BucketName: !If [HasBucketName, !Ref BucketName, !Ref "AWS::NoValue"]
       Tags:
-        - Key: Name
-          Value: !Ref Name
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
         - Key: Contact
@@ -115,7 +106,7 @@ Resources:
           Value: !Ref ProjectData
       VersioningConfiguration:
         Status: !Ref VersioningConfiguration
-    DeletionPolicy: !Ref DeletionPolicy
+    DeletionPolicy: Delete
 
 Outputs:
   BucketName:
