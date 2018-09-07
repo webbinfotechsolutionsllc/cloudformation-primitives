@@ -11,6 +11,7 @@ Metadata:
           - VpcId
           - AvailabilityZone
           - CidrBlock
+          - MapPublicIpOnLaunch
       - Label:
           default: Environment and Tags
         Parameters:
@@ -19,7 +20,6 @@ Metadata:
           - Contact
           - ProjectId
           - ProjectData
-          - ShortName
 
 Parameters:
   Name:
