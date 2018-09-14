@@ -15,12 +15,16 @@ Metadata:
       - Label:
           default: Environment and Tags
         Parameters:
+          - Name
           - EnvironmentId
           - Contact
           - ProjectId
           - ProjectData
 
 Parameters:
+  Name:
+    Type: String
+    Default: MyVPC
   EnvironmentId:
     Type: String
     Default: dev
@@ -54,7 +58,7 @@ Parameters:
     Type: String
     Default: false
   InstanceTenancy:
-    Description: Specifies whether the instances launched in the VPC get DNS hostnames.
+    Description: Specifies the tenancy of instances.
     AllowedValues:
       - default
       - dedicated
@@ -70,6 +74,8 @@ Resources:
       EnableDnsHostnames: !Ref EnableDnsHostnames
       InstanceTenancy: !Ref InstanceTenancy
       Tags:
+        - Key: Name
+          Value: !Ref Name
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
         - Key: Contact
