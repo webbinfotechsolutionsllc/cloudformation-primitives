@@ -48,7 +48,7 @@ Resources:
           Value: !Ref ProjectData
 
 Outputs:
-  MyIgwId:
+  IgwId:
     Description: The ID of the IGW
     Value: !Ref MyIgw
     Export:
