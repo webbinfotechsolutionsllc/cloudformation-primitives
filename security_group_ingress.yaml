@@ -52,7 +52,7 @@ Conditions:
   HasCidrIp: !Not [!Equals [!Ref CidrIp, "None"]]
 Resources:
   SecurityGroupIngressFromSourceGroup:
-    Type: "AWS::EC2::SecurityGroupIngress"
+    Type: AWS::EC2::SecurityGroupIngress
     Condition: HasSourceSecurityGroupId
     Properties:
       IpProtocol: !Ref IpProtocol
@@ -61,7 +61,7 @@ Resources:
       SourceSecurityGroupId: !Ref SourceSecurityGroupId
       ToPort: !Ref ToPort
   SecurityGroupIngressFromCidrIp:
-    Type: "AWS::EC2::SecurityGroupIngress"
+    Type: AWS::EC2::SecurityGroupIngress
     Condition: HasCidrIp
     Properties:
       IpProtocol: !Ref IpProtocol

@@ -59,7 +59,7 @@ Parameters:
 
 Resources:
   MySubnet:
-    Type: "AWS::EC2::Subnet"
+    Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Ref AvailabilityZone
       CidrBlock: !Ref CidrBlock

@@ -67,7 +67,7 @@ Parameters:
 
 Resources:
   MyVpc:
-    Type: "AWS::EC2::VPC"
+    Type: AWS::EC2::VPC
     Properties:
       CidrBlock: !Ref CidrBlock
       EnableDnsSupport: !Ref EnableDnsSupport

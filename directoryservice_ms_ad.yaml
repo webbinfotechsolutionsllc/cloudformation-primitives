@@ -37,7 +37,7 @@ Parameters:
     Type: AWS::EC2::Subnet::Id
 Resources:
   MyDirectory:
-    Type: "AWS::DirectoryService::MicrosoftAD"
+    Type: AWS::DirectoryService::MicrosoftAD
     Properties:
       Name: !Ref Name
       ShortName: !Ref ShortName
