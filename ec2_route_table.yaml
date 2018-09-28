@@ -56,7 +56,7 @@ Resources:
           Value: !Ref ProjectData
 
 Outputs:
-  MyRouteTableId:
+  RouteTableId:
     Description: The ID of the route table
     Value: !Ref MyRouteTable
     Export:
