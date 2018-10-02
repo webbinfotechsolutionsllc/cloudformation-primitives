@@ -8,8 +8,11 @@ Metadata:
     ParameterGroups: 
       - Label: 
           default: Directory Service Configuration
-        Parameters: 
+        Parameters:
+          - Description
+          - CreateAlias 
           - VpcId
+          - EnableSso
           - Name
           - ShortName
           - SsmSimpleAdPassName
@@ -19,9 +22,24 @@ Metadata:
           - SubnetId2
 
 Parameters:
+  Description:
+    Type: String
+    Default: A description of the directory.
+  CreateAlias:
+    Type: String
+    Default: false
+    AllowedValues:
+      - true
+      - false
   VpcId:
     Description: Deploy to which VPC
     Type: AWS::EC2::VPC::Id
+  EnableSso:
+    Type: String
+    Default: false
+    AllowedValues:
+      - true
+      - false
   Name:
     Type: String
     Default: DNSName
@@ -65,4 +83,4 @@ Outputs:
     Description: The ID of the directory
     Value: !Ref MyDirectory
     Export:
-      Name: !Sub ${AWS::StackName}-${ShortName}
+      Name: !Sub ${AWS::StackName}-${ShortName}-SIMPLEADID
