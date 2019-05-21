@@ -25,8 +25,7 @@ Parameters:
     Default: "None"
   SourceSecurityGroupId:
     Description: If the source is a security group, enter it here. If not, leave the value at None and fill in the CidrIp field.
-    Type: String
-    Default: "None"
+    Type: AWS::EC2::SecurityGroup::Id
   IpProtocol:
     Description: Ingress rule IP Protocol. Allowed values are tcp, udp, or icmp.
     Type: String

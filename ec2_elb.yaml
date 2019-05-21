@@ -17,7 +17,7 @@ Metadata:
           - HealthCheckHealthyThreshold
           - HealthCheckUnhealthyThreshold
           - HealthCheckInterval
-          - Timeout
+          - HealthCheckTimeout
           - EnvironmentId
           - Contact
           - ProjectId
@@ -85,12 +85,12 @@ Resources:
         - LoadBalancerPort: !Ref LoadBalancerPort
           InstancePort: !Ref InstancePort
           Protocol: !Ref Protocol
-          HealthCheck:
-            Target: !Ref HealthCheckTarget
-            HealthyThreshold: !Ref HealthCheckHealthyThreshold
-            UnhealthyThreshold: !Ref HealthCheckUnhealthyThreshold
-            Interval: !Ref HealthCheckInterval
-            Timeout: !Ref HealthCheckTimeout
+      HealthCheck:
+        Target: !Ref HealthCheckTarget
+        HealthyThreshold: !Ref HealthCheckHealthyThreshold
+        UnhealthyThreshold: !Ref HealthCheckUnhealthyThreshold
+        Interval: !Ref HealthCheckInterval
+        Timeout: !Ref HealthCheckTimeout
       Subnets: !Ref Subnets
       SecurityGroups: !Ref SecurityGroups
       Tags:

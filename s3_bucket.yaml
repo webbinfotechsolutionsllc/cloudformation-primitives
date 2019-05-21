@@ -13,9 +13,7 @@ Metadata:
           - AccessControl
           - KmsMasterKeyId
           - SseAlgorithm
-          - AccelerateConfiguration
           - VersioningConfiguration
-          - DeletionPolicy
       - Label:
           default: Environment and Tags
         Parameters:

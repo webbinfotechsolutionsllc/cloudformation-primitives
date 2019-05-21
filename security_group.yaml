@@ -13,7 +13,7 @@ Metadata:
           default: Environment and Tags
         Parameters: 
           - EnvironmentId
-          - Contact
+          - AdminContact
           - ProjectId
           - ProjectData
           - ShortName
@@ -21,7 +21,7 @@ Parameters:
   EnvironmentId:
     Type: String
     Default: test
-  Contact:
+  AdminContact:
     Type: String
     Default: Name
   ProjectId:
@@ -46,7 +46,7 @@ Resources:
       GroupDescription: !Ref GroupDescription
       Tags:
         - Key: Name
-          Value: !Sub ${ProjectId}-${EnvironmentName}-${ShortName}
+          Value: !Sub ${ProjectId}-${EnvironmentId}-${ShortName}
         - Key: contact
           Value: !Ref AdminContact
         - Key: project_id
@@ -59,4 +59,4 @@ Outputs:
     Description: Security Group ID
     Value: !Ref SecurityGroup
     Export:
-      Name: !Sub ${AWS::StackName}-${ProjectId}-${EnvironmentName}-${ShortName}
+      Name: !Sub ${AWS::StackName}-${ProjectId}-${EnvironmentId}-${ShortName}

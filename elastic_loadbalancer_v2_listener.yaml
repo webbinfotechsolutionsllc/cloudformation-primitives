@@ -10,10 +10,6 @@ Metadata:
           default: Listener Configuration
         Parameters: 
           - AppName
-          - EnvironmentId
-          - AdminContact
-          - ProjectId
-          - ProjectData
           - LoadBalancerArn
           - TargetGroupArn
           - CertificateArn
@@ -25,18 +21,6 @@ Parameters:
   AppName:
     Type: String
     Default: App1
-  EnvironmentId:
-    Type: String
-    Default: EnvironmentId
-  AdminContact:
-    Type: String
-    Default: SomeUser
-  ProjectId:
-    Type: String
-    Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=ENV
   LoadBalancerArn:
     Description: Load balancer ARN.
     Type: String
