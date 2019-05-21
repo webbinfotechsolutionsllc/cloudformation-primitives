@@ -1,0 +1,125 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description:
+  CloudFormation template primitive which creates a load balancer v2 target group. Intended to be used as part of a nested CloudFormation template to create one or more target groups.
+
+Metadata: 
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - Label: 
+          default: OpsWorks Stack Configuration
+        Parameters: 
+          - AppName
+          - EnvironmentId
+          - AdminContact
+          - ProjectId
+          - ProjectData
+          - HealthCheckIntervalSeconds
+          - HealthCheckPath
+          - HealthCheckPort
+          - HealthCheckProtocol
+          - HealthCheckTimeoutSeconds
+          - HealthyThresholdCount
+          - UnhealthyThresholdCount
+          - Matcher
+          - Port
+          - Protocol
+          - VpcId
+Parameters:
+  AppName:
+    Type: String
+    Default: App1
+  EnvironmentId:
+    Type: String
+    Default: EnvironmentId
+  AdminContact:
+    Type: String
+    Default: SomeUser
+  ProjectId:
+    Type: String
+    Default: ProjectId
+  ProjectData:
+    Type: String
+    Default: env=ENV
+  HealthCheckIntervalSeconds:
+    Description: Health check interval in seconds
+    Type: Number
+    Default: 30
+  HealthCheckPath:
+    Description: Health check path
+    Type: String
+    Default: /
+  HealthCheckPort:
+    Description: Health check port
+    Type: String
+    Default: traffic-port
+  HealthCheckProtocol:
+    Description: Health check protocol
+    Type: String
+    Default: HTTP
+    AllowedValues: 
+      - HTTP
+      - HTTPS
+  HealthCheckTimeoutSeconds:
+    Description: Health check interval in seconds
+    Type: Number
+    Default: 5
+  HealthyThresholdCount:
+    Description: Health check healthy threshold count
+    Type: Number
+    Default: 5
+  UnhealthyThresholdCount:
+    Description: Health check unhealthy threshold count
+    Type: Number
+    Default: 2
+  Matcher:
+    Description: Success Http return code
+    Type: String
+    Default: 200
+  Port:
+    Description: Back end port for registered instances. Can be overridden by registration.
+    Type: Number
+    Default: 80
+  Protocol:
+    Description: Back end protocol. Can be overridden by registration.
+    Type: String
+    Default: HTTP
+    AllowedValues: 
+      - HTTP
+      - HTTPS
+  VpcId:
+    Description: VPC ID for target group
+    Type: AWS::EC2::VPC::Id
+Resources:
+  LoadBalancerTargetGroup:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: !Ref HealthCheckIntervalSeconds
+      HealthCheckPath: !Ref HealthCheckPath
+      HealthCheckPort: !Ref HealthCheckPort
+      HealthCheckProtocol: !Ref HealthCheckProtocol
+      HealthCheckTimeoutSeconds: !Ref HealthCheckTimeoutSeconds
+      HealthyThresholdCount: !Ref HealthyThresholdCount
+      UnhealthyThresholdCount: !Ref UnhealthyThresholdCount
+      Matcher:
+        HttpCode: !Ref Matcher
+      Name: !Sub ${ProjectId}-${EnvironmentId}-${AppName}
+      Port: !Ref Port
+      Protocol: !Ref Protocol
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectId}-${EnvironmentId}-${AppName}
+        - Key: admin_contact
+          Value: !Ref AdminContact
+        - Key: service_id
+          Value: !Ref ProjectId
+        - Key: service_data
+          Value: !Ref ProjectData
+      VpcId: !Ref VpcId
+Outputs:
+  LoadBalancerTargetGroupArn:
+    Description: Load Balancer Target Group ARN
+    Value: !Ref LoadBalancerTargetGroup 
+    Export:
+      Name: !Sub "${AWS::StackName}-${AppName}-target-group"

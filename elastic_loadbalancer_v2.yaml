@@ -1,0 +1,71 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description:
+  CloudFormation template primitive which creates a load balancer v2 application load balancer. Intended to be used as part of a nested CloudFormation template to create one or more layers on a stack.
+
+Metadata: 
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - Label: 
+          default: Load Balancer Configuration
+        Parameters: 
+          - Scheme
+          - EnvironmentId
+          - AdminContact
+          - ProjectId
+          - ProjectData
+          - Subnets
+          - SecurityGroups
+Parameters:
+  Scheme:
+    Type: String
+    Default: internet-facing
+    AllowedValues: 
+      - internal
+      - internet-facing
+  EnvironmentId:
+    Type: String
+    Default: EnvironmentId
+  AdminContact:
+    Type: String
+    Default: UserName
+  ProjectId:
+    Type: String
+    Default: ProjectId
+  ProjectData:
+    Type: String
+    Default: env=ENV
+  SecurityGroups:
+    Description: Comma delimited list of security groups
+    Type: List<AWS::EC2::SecurityGroup::Id>
+  Subnets:
+    Description: Comma delimited list of subnets
+    Type: List<AWS::EC2::Subnet::Id>
+Resources:
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: !Ref Scheme
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectId}-${EnvironmentId}-alb-${Scheme}
+        - Key: admin_contact
+          Value: !Ref AdminContact
+        - Key: service_id
+          Value: !Ref ProjectId
+        - Key: service_data
+          Value: !Ref ProjectData
+      Subnets: !Ref Subnets
+      SecurityGroups: !Ref SecurityGroups
+Outputs:
+  LoadBalancerArn:
+    Description: Load Balancer ARN
+    Value: !Ref LoadBalancer 
+    Export:
+      Name: !Sub "${AWS::StackName}-alb-arn"
+  LoadBalancerDnsName:
+    Description: Load Balancer DNS Name
+    Value: !GetAtt LoadBalancer.DNSName
+    Export:
+      Name: !Sub ${AWS::StackName}-alb-${Scheme}-dns
