@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: Creates an Internet Gateway resource.
+Description: CloudFormation template primitive which creates an Internet Gateway resource.
 
 Metadata:
   AWS::CloudFormation::Interface:

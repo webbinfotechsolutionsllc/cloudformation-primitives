@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: Creates a Route Table resource.
+Description: CloudFormation template primitive which creates a Route Table resource.
 
 Metadata:
   AWS::CloudFormation::Interface:

@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: Creates a VPC resource.
+Description: CloudFormation template primitive which creates a VPC resource.
 
 Metadata:
   AWS::CloudFormation::Interface:

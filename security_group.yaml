@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: Creates a security group resource. If you want to cross-reference two security groups in the ingress and egress rules of the security group, use the AWS::EC2::SecurityGroupEgress and AWS::EC2::SecurityGroupIngress primitives to define those rules. Do not use the embedded ingress and egress rules in the AWS::EC2::SecurityGroup. Doing so creates a circular dependency, which AWS CloudFormation doesn't allow. 
+Description: CloudFormation template primitive which creates a security group resource. If you want to cross-reference two security groups in the ingress and egress rules of the security group, use the AWS::EC2::SecurityGroupEgress and AWS::EC2::SecurityGroupIngress primitives to define those rules. Do not use the embedded ingress and egress rules in the AWS::EC2::SecurityGroup. Doing so creates a circular dependency, which AWS CloudFormation doesn't allow. 
 
 Metadata: 
   AWS::CloudFormation::Interface: 
