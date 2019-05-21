@@ -23,6 +23,7 @@ Metadata:
           - ProjectId
           - ProjectData
           - Subnets
+          - CrossZoneLoadBalancing
           - SecurityGroups
 Parameters:
   Scheme:
@@ -76,6 +77,12 @@ Parameters:
   Subnets:
     Description: Comma delimited list of subnets
     Type: List<AWS::EC2::Subnet::Id>
+  CrossZoneLoadBalancing:
+    Type: String
+    Default: true
+    AllowedValues:
+      - true
+      - false
 Resources:
   LoadBalancer:
     Type: AWS::ElasticLoadBalancing::LoadBalancer
@@ -92,6 +99,7 @@ Resources:
         Interval: !Ref HealthCheckInterval
         Timeout: !Ref HealthCheckTimeout
       Subnets: !Ref Subnets
+      CrossZone: !Ref CrossZoneLoadBalancing
       SecurityGroups: !Ref SecurityGroups
       Tags:
         - Key: Name
