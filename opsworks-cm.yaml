@@ -1,0 +1,134 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: CloudFormation template primitive which creates an Internet Gateway resource.
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Environment and Tags
+        Parameters:
+          - EnvironmentId
+          - Contact
+          - ProjectId
+          - ProjectData
+      - Label:
+          default: OpsWorks-CM
+        Parameters:
+          - SecretName
+
+
+Parameters:
+  NestedTemplateBaseUrl:
+    Type: String
+    Default: https://s3-us-west-2.amazonaws.com/com.witsolutions/cloudformation-primitives/
+  OpsWorksCMRolesTemplate:
+    Type: String
+    Default: opsworks-cm-roles.yaml
+  SecretName:
+    Type: String
+    Default: SecretName
+  EnvironmentId:
+    Type: String
+    Default: dev
+  Contact:
+    Type: String
+    Default: ContactName
+  ProjectId:
+    Type: String
+    Default: ProjectId
+  ProjectData:
+    Type: String
+    Default: env=DEV
+  ChefAutomatePivotalKey:
+    Type: String
+  ChefAutomateAdminPasswordLength:
+    Type: Number
+    Default: 8
+  AssociatePublicIpAddress:
+    Type: String
+    AllowedValues:
+      - true
+      - false
+    Default: true
+  BackupRetentionCount:
+    Type: Number
+    Default: 1
+  DisableAutomatedBackup:
+    Type: String
+    AllowedValues:
+      - true
+      - false
+    Default: false
+  Engine:
+    Type: String
+    AllowedValues:
+      - ChefAutomate
+      - Puppet
+    Default: ChefAutomate
+  EngineModel:
+    Type: String
+    AllowedValues:
+      - Single
+      - Monolithic
+    Default: Single
+  EngineVersion:
+    Type: String
+    AllowedValues:
+      - 12
+      - 2017
+    Default: 12
+  
+Resources:
+  OpsWorksCmSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: "This is a Secrets Manager secret for an OpsWorks for Chef Automate resource, containing the pivotal key and admin password necessary for the initial setup of OpsWorks for Chef Automate"
+      Name: !Ref SecretName
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"CHEF_AUTOMATE_PIVOTAL_KEY": ${ChefAutomatePivotalKey}}'
+        GenerateStringKey: "CHEF_AUTOMATE_ADMIN_PASSWORD"
+        PasswordLength: !Ref ChefAutomateAdminPasswordLength
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: EnvironmentId
+          Value: !Ref EnvironmentId
+        - Key: Contact
+          Value: !Ref Contact
+        - Key: ProjectId
+          Value: !Ref ProjectId
+        - Key: ProjectData
+          Value: !Ref ProjectData
+  OpsWorksCmRoles:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${OpsWorksCMRolesTemplate}
+  OpsWorksCmServer:
+    Type: AWS::OpsWorksCM::Server
+    Properties: 
+      AssociatePublicIpAddress: !Ref AssociatePublicIpAddress
+      BackupRetentionCount: !Ref BackupRetentionCount
+      DisableAutomatedBackup: !Ref DisableAutomatedBackup
+      Engine: !Ref Engine
+      EngineAttributes: 
+        - Name: "CHEF_AUTOMATE_PIVOTAL_KEY"
+          Value: !Join ['', ['{{resolve:secretsmanager:', !Ref OpsWorksCmSecret, ':SecretString:CHEF_AUTOMATE_PIVOTAL_KEY}}' ]]
+        - Name: "CHEF_AUTOMATE_ADMIN_PASSWORD"
+          Value: !Join ['', ['{{resolve:secretsmanager:', !Ref OpsWorksCmSecret, ':SecretString:CHEF_AUTOMATE_ADMIN_PASSWORD}}' ]]
+      EngineModel: !Ref EngineModel
+      EngineVersion: !Ref EngineVersion
+      InstanceProfileArn: !GetAtt OpsWorksCmRoles.Outputs.InstanceProfileArn
+      InstanceType: String
+      KeyPair: String
+      PreferredBackupWindow: String
+      PreferredMaintenanceWindow: String
+      SecurityGroupIds: 
+        - String
+      ServerName: String
+      ServiceRoleArn: String
+      SubnetIds: 
+        - String
+Outputs:
+  endpoint:
+    Description: OpsWorksCM Server Endpoint
+    Value: !GetAtt [OpsWorksCmServer, Endpoint]

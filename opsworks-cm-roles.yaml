@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: IAM Resources for AWS OpsWorks CM.
+
+Resources:
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+      - arn:aws:iam::aws:policy/AWSOpsWorksCMInstanceProfileRole
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+        Version: '2012-10-17'
+      Path: /
+      RoleName: !Join [ "", [ "aws-opsworks-cm-", !Ref "AWS::StackName" ] ]
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+      - Ref: InstanceRole
+  ServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSOpsWorksCMServiceRole
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - opsworks-cm.amazonaws.com
+        Version: '2012-10-17'
+      Path: /
+Outputs:
+  InstanceProfileArn:
+    Description: InstanceProfileArn
+    Value: !GetAtt [InstanceProfile, Arn]
+  ServiceRoleArn:
+    Description: ServiceRoleArn
+    Value: !GetAtt [ServiceRole, Arn]

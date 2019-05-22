@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: AWS OpsWorks for Chef Automate - IAM Resource for nodes
+
+Resources:
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+        Version: '2012-10-17'
+      Path: /
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - opsworks-cm:AssociateNode
+            - opsworks-cm:DescribeNodeAssociationStatus
+            Effect: Allow
+            Resource: '*'
+          Version: '2012-10-17'
+        PolicyName: InstancePolicy
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+      - Ref: InstanceRole
+      
+Outputs:
+  InstanceProfileArn:
+    Description: InstanceProfileArn
+    Value: !GetAtt [InstanceProfile, Arn]
