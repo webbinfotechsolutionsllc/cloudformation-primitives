@@ -144,7 +144,6 @@ Resources:
             - ec2.amazonaws.com
         Version: '2012-10-17'
       Path: /
-      RoleName: !Join [ "", [ "simple-ad-", !Ref "AWS::StackName" ] ]
   SimpleAdInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
@@ -161,3 +160,10 @@ Outputs:
     Value: !Ref SimpleAdInstanceRole
   SimpleAdInstanceProfileName:
     Value: !Ref SimpleAdInstanceProfile
+  SimpleAdInstanceRoleArn:
+    Description: InstanceRoleArn
+    Value: !GetAtt [SimpleAdInstanceRole, Arn]
+  SimpleAdInstanceProfileArn:
+    Description: InstanceProfileArn
+    Value: !GetAtt [SimpleAdInstanceProfile, Arn]
+
