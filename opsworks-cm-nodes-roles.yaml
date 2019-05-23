@@ -34,6 +34,9 @@ Resources:
       - Ref: InstanceRole
       
 Outputs:
+  InstanceRoleArn:
+    Description: InstanceRoleArn
+    Value: !GetAtt [InstanceRole, Arn]
   InstanceProfileArn:
     Description: InstanceProfileArn
     Value: !GetAtt [InstanceProfile, Arn]
