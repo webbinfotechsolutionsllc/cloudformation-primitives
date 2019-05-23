@@ -1,8 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-
-Description:
-  CloudFormation template primitive which creates an AWS Simple AD Directory Service.
-
+Description: CloudFormation template primitive which creates an AWS Simple AD Directory Service.
 Metadata: 
   AWS::CloudFormation::Interface: 
     ParameterGroups: 
@@ -24,7 +21,6 @@ Metadata:
           - Contact
           - ProjectId
           - ProjectData
-
 Parameters:
   VpcId:
     Description: Deploy to which VPC
@@ -133,11 +129,35 @@ Resources:
     Properties: 
       DhcpOptionsId: !Ref SimpleAdDhcpOptions
       VpcId: !Ref VpcId
-
-
+  SimpleAdInstanceRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+        Version: '2012-10-17'
+      Path: /
+      RoleName: !Join [ "", [ "simple-ad-", !Ref "AWS::StackName" ] ]
+  SimpleAdInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+      - !Ref SimpleAdInstanceRole
 Outputs:
   MyDirectoryId:
     Description: The ID of the directory
     Value: !Ref MyDirectory
     Export:
       Name: !Sub ${AWS::StackName}-${ShortName}-SIMPLEADID
+  SimpleAdInstanceRoleName:
+    Value: !Ref SimpleAdInstanceRole
+  SimpleAdInstanceProfileName:
+    Value: !Ref SimpleAdInstanceProfile

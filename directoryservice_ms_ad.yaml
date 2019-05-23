@@ -1,8 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-
-Description:
-  CloudFormation template primitive which creates a Microsoft AD Directory Service.
-
+Description: CloudFormation template primitive which creates a Microsoft AD Directory Service.
 Metadata: 
   AWS::CloudFormation::Interface: 
     ParameterGroups: 
@@ -15,7 +12,6 @@ Metadata:
           - Password
           - SubnetId1
           - SubnetId2
-
 Parameters:
   VpcId:
     Description: Deploy to which VPC
@@ -47,7 +43,6 @@ Resources:
           - !Ref SubnetId1
           - !Ref SubnetId2
         VpcId: !Ref VpcId
-
 Outputs:
   MyDirectoryId:
     Description: The ID of the directory
