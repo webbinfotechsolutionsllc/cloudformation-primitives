@@ -53,6 +53,14 @@ Parameters:
   SubnetId2:
     Description: Subnet 2
     Type: AWS::EC2::Subnet::Id
+  NetbiosNodeType:
+    Type: Number
+    Default: 2
+    AllowedValues:
+      - 1
+      - 2
+      - 4
+      - 8
   EnvironmentId:
     Type: String
     Default: dev
@@ -97,6 +105,30 @@ Resources:
           - !Ref SubnetId1
           - !Ref SubnetId2
         VpcId: !Ref VpcId
+  SimpleAdDhcpOptions:
+    Type: AWS::EC2::DHCPOptions
+    Properties: 
+      DomainName: !Ref Name
+      DomainNameServers: 
+        - !Select [ 0, !GetAtt MyDirectory.DnsIpAddresses ]
+        - !Select [ 1, !GetAtt MyDirectory.DnsIpAddresses ]
+      NetbiosNameServers: 
+        - !Select [ 0, !GetAtt MyDirectory.DnsIpAddresses ]
+        - !Select [ 1, !GetAtt MyDirectory.DnsIpAddresses ]
+      NetbiosNodeType: !Ref NetbiosNodeType
+      NtpServers: 
+        - !Select [ 0, !GetAtt MyDirectory.DnsIpAddresses ]
+        - !Select [ 1, !GetAtt MyDirectory.DnsIpAddresses ]
+      Tags:
+        - Key: EnvironmentId
+          Value: !Ref EnvironmentId
+        - Key: Contact
+          Value: !Ref Contact
+        - Key: ProjectId
+          Value: !Ref ProjectId
+        - Key: ProjectData
+          Value: !Ref ProjectData
+
 
 Outputs:
   MyDirectoryId:
