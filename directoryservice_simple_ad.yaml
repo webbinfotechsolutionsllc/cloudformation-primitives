@@ -12,11 +12,18 @@ Metadata:
           - VpcId
           - Name
           - ShortName
-          - SsmSimpleAdPassName
-          - SsmVersion
+          - SecretName
+          - SimpleAdAdminPasswordLength
           - Size
           - SubnetId1
           - SubnetId2
+      - Label: 
+          default: Tags
+        Parameters:
+          - EnvironmentId
+          - Contact
+          - ProjectId
+          - ProjectData
 
 Parameters:
   VpcId:
@@ -28,12 +35,12 @@ Parameters:
   ShortName:
     Type: String
     Default: ShortName
-  SsmSimpleAdPassName:
-    Description: The SSM secure parameter name which houses the directory password
+  SecretName:
     Type: String
-  SsmVersion:
-    Description: The SSM secure parameter name version to use
+    Default: SecretName
+  SimpleAdAdminPasswordLength:
     Type: Number
+    Default: 8
   Size:
     Type: String
     Default: Small
@@ -46,13 +53,44 @@ Parameters:
   SubnetId2:
     Description: Subnet 2
     Type: AWS::EC2::Subnet::Id
+  EnvironmentId:
+    Type: String
+    Default: dev
+  Contact:
+    Type: String
+    Default: ContactName
+  ProjectId:
+    Type: String
+    Default: ProjectId
+  ProjectData:
+    Type: String
+    Default: env=DEV
 Resources:
+  SimpleAdSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: "This is a Secrets Manager secret for a Simple AD resource, containing the admin password necessary for the initial setup of Simple AD"
+      Name: !Ref SecretName
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "administrator"}}'
+        GenerateStringKey: "password"
+        PasswordLength: !Ref SimpleAdAdminPasswordLength
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: EnvironmentId
+          Value: !Ref EnvironmentId
+        - Key: Contact
+          Value: !Ref Contact
+        - Key: ProjectId
+          Value: !Ref ProjectId
+        - Key: ProjectData
+          Value: !Ref ProjectData
   MyDirectory:
     Type: AWS::DirectoryService::SimpleAD
     Properties:
       Name: !Ref Name
       ShortName: !Ref ShortName
-      Password: !Sub '{{resolve:ssm-secure:${SsmSimpleAdPassName}:${SsmVersion}}}'
+      Password: !Join ['', ['{{resolve:secretsmanager:', !Ref SimpleAdSecret, ':SecretString:password}}' ]]
       Size: !Ref Size
       VpcSettings:
         SubnetIds:
