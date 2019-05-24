@@ -147,8 +147,8 @@ Resources:
       Description: "This is a Secrets Manager secret for an OpsWorks for Chef Automate resource, containing the pivotal key and admin password necessary for the initial setup of OpsWorks for Chef Automate, as well as the SSH keypair which will be set on the instance."
       Name: !Sub ${ProjectId}-${EnvironmentId}-opsworks-cm
       GenerateSecretString:
-        SecretStringTemplate: !Sub '{"CHEF_AUTOMATE_PIVOTAL_KEY": ${ChefAutomatePivotalKey}, "keypair": ${KeyPairName}, "privatekey": ${KeyPairPrivateKey}}'
-        GenerateStringKey: "CHEF_AUTOMATE_ADMIN_PASSWORD"
+        SecretStringTemplate: !Sub '{"CHEF_AUTOMATE_PIVOTAL_KEY": ${ChefAutomatePivotalKey},"keypair": ${KeyPairName},"privatekey": ${KeyPairPrivateKey}}'
+        GenerateStringKey: CHEF_AUTOMATE_ADMIN_PASSWORD
         PasswordLength: !Ref ChefAutomateAdminPasswordLength
         ExcludeCharacters: '"@/\'
       Tags:
