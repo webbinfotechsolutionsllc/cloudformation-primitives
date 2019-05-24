@@ -4,16 +4,27 @@ Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
+          default: Nested Template Information
+        Parameters:
+          - NestedTemplateBaseUrl
+          - RolesTemplate
+          - NodesRolesTemplate
+          - SecurityGroupTemplate
+          - SecurityGroupIngressTemplate
+      - Label:
+          default: Network Information
+        Parameters:
+          - SecurityGroupVpcId
+          - SecurityGroupCidrIp
+          - KeyPairName
+          - KeyPairPrivateKey
+      - Label:
           default: Environment and Tags
         Parameters:
           - EnvironmentId
           - Contact
           - ProjectId
           - ProjectData
-      - Label:
-          default: OpsWorks-CM
-        Parameters:
-          - SecretName
 Parameters:
   NestedTemplateBaseUrl:
     Type: String
@@ -30,31 +41,27 @@ Parameters:
   SecurityGroupIngressTemplate:
     Type: String
     Default: security_group_ingress.yaml
-  SecurityGroupShortName:
-    Type: String
-    Default: opsworks-cm
-  SecurityGroupDescription:
-    Type: String
   SecurityGroupVpcId:
     Type: AWS::EC2::VPC::Id
   SecurityGroupCidrIp:
     Type: String
     Default: 192.168.1.0/24
     Description: CIDR block for ingress rule to OpsWorks CM Server. Usually the CIDR of the VPC into which you're deploying.
-  SecretName:
-    Type: String
-    Default: SecretName
   KeyPairName:
     Type: String
     Default: KeyPairName
+    Description: Name of the SSH keypair to be set on the OpsWorks CM server.
   KeyPairPrivateKey:
     Type: String
+    Description: Private key of the SSH keypair to be set on the OpsWorks CM server. This value will be stored in AWS Secrets for later retrieval.
   PreferredBackupWindow:
     Type: String
     Default: "Sat:08:01"
+    Description: Preferred backup window time in UTC
   PreferredMaintenanceWindow:
     Type: String
     Default: "Fri:08:01"
+    Description: Preferred maintenance window time in UTC
   OpsWorksCmSubnetA:
     Type: AWS::EC2::Subnet::Id
   OpsWorksCmSubnetB:
@@ -122,8 +129,8 @@ Resources:
   OpsWorksCmSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Description: "This is a Secrets Manager secret for an OpsWorks for Chef Automate resource, containing the pivotal key and admin password necessary for the initial setup of OpsWorks for Chef Automate"
-      Name: !Ref SecretName
+      Description: "This is a Secrets Manager secret for an OpsWorks for Chef Automate resource, containing the pivotal key and admin password necessary for the initial setup of OpsWorks for Chef Automate, as well as the SSH keypair which will be set on the instance."
+      Name: !Sub ${ProjectId}-${EnvironmentId}-opsworks-cm
       GenerateSecretString:
         SecretStringTemplate: !Sub '{"CHEF_AUTOMATE_PIVOTAL_KEY": ${ChefAutomatePivotalKey}, "keypair": ${KeyPairName}, "privatekey": ${KeyPairPrivateKey}}'
         GenerateStringKey: "CHEF_AUTOMATE_ADMIN_PASSWORD"
@@ -151,8 +158,8 @@ Resources:
     Properties:
       Parameters:
         VpcId: !Ref SecurityGroupVpcId
-        GroupDescription: !Ref SecurityGroupDescription
-        Shortname: !Ref SecurityGroupShortName
+        GroupDescription: OpsWorks CM Security Group controlling ingress to an OpsWorks CM server.
+        Shortname: !Sub ${ProjectId}-${EnvironmentId}-opsworks-cm
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
