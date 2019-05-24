@@ -1,7 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-
 Description: CloudFormation template primitive which creates an Internet Gateway resource.
-
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -16,18 +14,53 @@ Metadata:
           default: OpsWorks-CM
         Parameters:
           - SecretName
-
-
 Parameters:
   NestedTemplateBaseUrl:
     Type: String
     Default: https://s3-us-west-2.amazonaws.com/com.witsolutions/cloudformation-primitives/
-  OpsWorksCMRolesTemplate:
+  RolesTemplate:
     Type: String
     Default: opsworks-cm-roles.yaml
+  NodesRolesTemplate:
+    Type: String
+    Default: opsworks-cm-nodes-roles.yaml
+  SecurityGroupTemplate:
+    Type: String
+    Default: security_group.yaml
+  SecurityGroupIngressTemplate:
+    Type: String
+    Default: security_group_ingress.yaml
+  SecurityGroupShortName:
+    Type: String
+    Default: opsworks-cm
+  SecurityGroupDescription:
+    Type: String
+  SecurityGroupVpcId:
+    Type: AWS::EC2::VPC::Id
+  SecurityGroupCidrIp:
+    Type: String
+    Default: 192.168.1.0/24
+    Description: CIDR block for ingress rule to OpsWorks CM Server. Usually the CIDR of the VPC into which you're deploying.
   SecretName:
     Type: String
     Default: SecretName
+  KeyPairName:
+    Type: String
+    Default: KeyPairName
+  KeyPairPrivateKey:
+    Type: String
+  PreferredBackupWindow:
+    Type: String
+    Default: "Sat:08:01"
+  PreferredMaintenanceWindow:
+    Type: String
+    Default: "Fri:08:01"
+  OpsWorksCmSubnetA:
+    Type: AWS::EC2::Subnet::Id
+  OpsWorksCmSubnetB:
+    Type: AWS::EC2::Subnet::Id
+  OpsWorksCmSubnetC:
+    Type: AWS::EC2::Subnet::Id
   EnvironmentId:
     Type: String
     Default: dev
@@ -50,7 +83,7 @@ Parameters:
     AllowedValues:
       - true
       - false
-    Default: true
+    Default: false
   BackupRetentionCount:
     Type: Number
     Default: 1
@@ -78,7 +111,13 @@ Parameters:
       - 12
       - 2017
     Default: 12
-  
+  InstanceType:
+    Type: String
+    AllowedValues:
+      - m4.large
+      - r4.xlarge
+      - r4.2xlarge
+    Default: m4.large
 Resources:
   OpsWorksCmSecret:
     Type: AWS::SecretsManager::Secret
@@ -86,7 +125,7 @@ Resources:
       Description: "This is a Secrets Manager secret for an OpsWorks for Chef Automate resource, containing the pivotal key and admin password necessary for the initial setup of OpsWorks for Chef Automate"
       Name: !Ref SecretName
       GenerateSecretString:
-        SecretStringTemplate: !Sub '{"CHEF_AUTOMATE_PIVOTAL_KEY": ${ChefAutomatePivotalKey}}'
+        SecretStringTemplate: !Sub '{"CHEF_AUTOMATE_PIVOTAL_KEY": ${ChefAutomatePivotalKey}, "keypair": ${KeyPairName}, "privatekey": ${KeyPairPrivateKey}}'
         GenerateStringKey: "CHEF_AUTOMATE_ADMIN_PASSWORD"
         PasswordLength: !Ref ChefAutomateAdminPasswordLength
         ExcludeCharacters: '"@/\'
@@ -102,7 +141,52 @@ Resources:
   OpsWorksCmRoles:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub ${NestedTemplateBaseUrl}${OpsWorksCMRolesTemplate}
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${RolesTemplate}
+  OpsWorksCmNodesRoles:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${NodesRolesTemplate}
+  OpsworksCmSecurityGroup:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        VpcId: !Ref SecurityGroupVpcId
+        GroupDescription: !Ref SecurityGroupDescription
+        Shortname: !Ref SecurityGroupShortName
+        EnvironmentId: !Ref EnvironmentId
+        Contact: !Ref Contact
+        ProjectId: !Ref ProjectId
+        ProjectData: !Ref ProjectData
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupTemplate}
+      Tags:
+        - Key: EnvironmentId
+          Value: !Ref EnvironmentId
+        - Key: Contact
+          Value: !Ref Contact
+        - Key: ProjectId
+          Value: !Ref ProjectId
+        - Key: ProjectData
+          Value: !Ref ProjectData
+  OpsworksCmSecurityGroupIngress22:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: TCP
+        GroupId: !GetAtt OpsworksCmSecurityGroup.Outputs.SecurityGroupId
+        FromPort: "22"
+        CidrIp: !Ref SecurityGroupCidrIp
+        ToPort: "22"
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+  OpsworksCmSecurityGroupIngress443:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: TCP
+        GroupId: !GetAtt OpsworksCmSecurityGroup.Outputs.SecurityGroupId
+        FromPort: "443"
+        CidrIp: !Ref SecurityGroupCidrIp
+        ToPort: "443"
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
   OpsWorksCmServer:
     Type: AWS::OpsWorksCM::Server
     Properties: 
@@ -118,16 +202,17 @@ Resources:
       EngineModel: !Ref EngineModel
       EngineVersion: !Ref EngineVersion
       InstanceProfileArn: !GetAtt OpsWorksCmRoles.Outputs.InstanceProfileArn
-      InstanceType: String
-      KeyPair: String
-      PreferredBackupWindow: String
-      PreferredMaintenanceWindow: String
+      InstanceType: !Ref InstanceType
+      KeyPair: !Ref KeyPairName
+      PreferredBackupWindow: !Ref PreferredBackupWindow
+      PreferredMaintenanceWindow: !Ref PreferredMaintenanceWindow
       SecurityGroupIds: 
-        - String
-      ServerName: String
-      ServiceRoleArn: String
+        - !GetAtt OpsworksCmSecurityGroup.Outputs.SecurityGroupId
+      ServiceRoleArn: !GetAtt OpsWorksCmRoles.Outputs.ServiceRoleArn
       SubnetIds: 
-        - String
+        - !Ref OpsWorksCmSubnetA
+        - !Ref OpsWorksCmSubnetB
+        - !Ref OpsWorksCmSubnetC
 Outputs:
   endpoint:
     Description: OpsWorksCM Server Endpoint
