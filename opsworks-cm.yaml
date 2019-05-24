@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: CloudFormation template primitive which creates an Internet Gateway resource.
+Description: CloudFormation template primitive which creates an Opsworks CM Server environment.
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
