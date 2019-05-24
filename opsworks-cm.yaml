@@ -174,7 +174,7 @@ Resources:
       Parameters:
         VpcId: !Ref SecurityGroupVpcId
         GroupDescription: OpsWorks CM Security Group controlling ingress to an OpsWorks CM server.
-        Shortname: !Sub ${ProjectId}-${EnvironmentId}-opsworks-cm
+        ShortName: !Sub ${ProjectId}-${EnvironmentId}-opsworks-cm
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId

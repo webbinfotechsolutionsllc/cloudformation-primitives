@@ -13,7 +13,7 @@ Metadata:
           default: Environment and Tags
         Parameters: 
           - EnvironmentId
-          - AdminContact
+          - Contact
           - ProjectId
           - ProjectData
           - ShortName
@@ -21,7 +21,7 @@ Parameters:
   EnvironmentId:
     Type: String
     Default: test
-  AdminContact:
+  Contact:
     Type: String
     Default: Name
   ProjectId:
@@ -48,7 +48,7 @@ Resources:
         - Key: Name
           Value: !Sub ${ProjectId}-${EnvironmentId}-${ShortName}
         - Key: contact
-          Value: !Ref AdminContact
+          Value: !Ref Contact
         - Key: project_id
           Value: !Ref ProjectId
         - Key: project_data
