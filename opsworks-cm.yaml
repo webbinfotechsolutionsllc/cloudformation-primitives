@@ -18,13 +18,27 @@ Metadata:
           - SecurityGroupCidrIp
           - KeyPairName
           - KeyPairPrivateKey
+          - OpsWorksCmSubnetA
+          - OpsWorksCmSubnetB
+          - OpsWorksCmSubnetC
+          - AssociatePublicIpAddress
+      - Label:
+          default: Opsworks CM Server settings
+        Parameters:
+          - InstanceType
+          - Engine
+          - EngineModel
+          - EngineVersion
+          - ChefAutomatePivotalKey
+          - ChefAutomateAdminPasswordLength
+          - PreferredBackupWindow
+          - BackupRetentionCount
+          - DisableAutomatedBackup
       - Label:
           default: Environment and Tags
         Parameters:
           - EnvironmentId
-          - Contact
-          - ProjectId
-          - ProjectData
+          - PreferredMaintenanceWindow
 Parameters:
   NestedTemplateBaseUrl:
     Type: String
@@ -57,29 +71,17 @@ Parameters:
   PreferredBackupWindow:
     Type: String
     Default: "Sat:08:01"
-    Description: Preferred backup window time in UTC
+    Description: Preferred backup window time in UTC, in the form HH:MM (daily) or DDD:HH:MM for weekly
   PreferredMaintenanceWindow:
     Type: String
     Default: "Fri:08:01"
-    Description: Preferred maintenance window time in UTC
+    Description: Preferred maintenance window time in UTC, in the form HH:MM (daily) or DDD:HH:MM for weekly
   OpsWorksCmSubnetA:
     Type: AWS::EC2::Subnet::Id
   OpsWorksCmSubnetB:
     Type: AWS::EC2::Subnet::Id
   OpsWorksCmSubnetC:
     Type: AWS::EC2::Subnet::Id
-  EnvironmentId:
-    Type: String
-    Default: dev
-  Contact:
-    Type: String
-    Default: ContactName
-  ProjectId:
-    Type: String
-    Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=DEV
   ChefAutomatePivotalKey:
     Type: String
   ChefAutomateAdminPasswordLength:
@@ -91,6 +93,7 @@ Parameters:
       - true
       - false
     Default: false
+    Description: Whether or not associate a pulblic IP with the OpsWorks CM server, if it is in a public subnet
   BackupRetentionCount:
     Type: Number
     Default: 1
@@ -125,6 +128,18 @@ Parameters:
       - r4.xlarge
       - r4.2xlarge
     Default: m4.large
+  EnvironmentId:
+    Type: String
+    Default: dev
+  Contact:
+    Type: String
+    Default: ContactName
+  ProjectId:
+    Type: String
+    Default: ProjectId
+  ProjectData:
+    Type: String
+    Default: env=DEV
 Resources:
   OpsWorksCmSecret:
     Type: AWS::SecretsManager::Secret
