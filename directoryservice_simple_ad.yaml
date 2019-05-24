@@ -76,7 +76,7 @@ Resources:
       Description: "This is a Secrets Manager secret for a Simple AD resource, containing the admin password necessary for the initial setup of Simple AD"
       Name: !Ref SecretName
       GenerateSecretString:
-        SecretStringTemplate: '{"username": "administrator"}}'
+        SecretStringTemplate: '{"username": "administrator"}'
         GenerateStringKey: "password"
         PasswordLength: !Ref SimpleAdAdminPasswordLength
         ExcludeCharacters: '"@/\'
