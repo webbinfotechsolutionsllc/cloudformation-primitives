@@ -7,16 +7,17 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
-      - arn:aws:iam::aws:policy/AWSOpsWorksCMInstanceProfileRole
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+        - arn:aws:iam::aws:policy/AWSOpsWorksCMInstanceProfileRole
+      MaxSessionDuration: 14400
       AssumeRolePolicyDocument:
         Statement:
-        - Action:
-          - sts:AssumeRole
-          Effect: Allow
-          Principal:
-            Service:
-            - ec2.amazonaws.com
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
         Version: '2012-10-17'
       Path: /
   InstanceProfile:
@@ -24,20 +25,21 @@ Resources:
     Properties:
       Path: /
       Roles:
-      - Ref: InstanceRole
+        - Ref: InstanceRole
   ServiceRole:
     Type: AWS::IAM::Role
     Properties:
       ManagedPolicyArns:
-      - arn:aws:iam::aws:policy/service-role/AWSOpsWorksCMServiceRole
+        - arn:aws:iam::aws:policy/service-role/AWSOpsWorksCMServiceRole
+      MaxSessionDuration: 14400
       AssumeRolePolicyDocument:
         Statement:
         - Action:
-          - sts:AssumeRole
+            - sts:AssumeRole
           Effect: Allow
           Principal:
             Service:
-            - opsworks-cm.amazonaws.com
+              - opsworks-cm.amazonaws.com
         Version: '2012-10-17'
       Path: /
 Outputs:
