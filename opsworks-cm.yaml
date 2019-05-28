@@ -17,10 +17,7 @@ Metadata:
           - SecurityGroupVpcId
           - SecurityGroupCidrIp
           - KeyPairName
-          - KeyPairPrivateKey
-          - OpsWorksCmSubnetA
-          - OpsWorksCmSubnetB
-          - OpsWorksCmSubnetC
+          - OpsWorksCmSubnet
           - AssociatePublicIpAddress
       - Label:
           default: OpsWorks CM Server settings
@@ -29,8 +26,6 @@ Metadata:
           - Engine
           - EngineModel
           - EngineVersion
-          - ChefAutomatePivotalKey
-          - ChefAutomateAdminPasswordLength
           - PreferredBackupWindow
           - BackupRetentionCount
           - DisableAutomatedBackup
@@ -62,34 +57,22 @@ Parameters:
     Type: AWS::EC2::VPC::Id
   SecurityGroupCidrIp:
     Type: String
-    Default: 192.168.1.0/24
+    Default: 192.168.0.0/21
     Description: CIDR block for ingress rule to OpsWorks CM Server. Usually the CIDR of the VPC into which you're deploying.
   KeyPairName:
     Type: String
     Default: KeyPairName
     Description: Name of the SSH keypair to be set on the OpsWorks CM server.
-  KeyPairPrivateKey:
-    Type: String
-    Description: Private key of the SSH keypair to be set on the OpsWorks CM server. This value will be stored in AWS Secrets for later retrieval.
   PreferredBackupWindow:
     Type: String
-    Default: "Sat:08:01"
+    Default: "Sat:11:00"
     Description: Preferred backup window time in UTC, in the form HH:MM (daily) or DDD:HH:MM for weekly
   PreferredMaintenanceWindow:
     Type: String
-    Default: "Fri:08:01"
+    Default: "Sat:08:00"
     Description: Preferred maintenance window time in UTC, in the form HH:MM (daily) or DDD:HH:MM for weekly
-  OpsWorksCmSubnetA:
+  OpsWorksCmSubnet:
     Type: AWS::EC2::Subnet::Id
-  OpsWorksCmSubnetB:
-    Type: AWS::EC2::Subnet::Id
-  OpsWorksCmSubnetC:
-    Type: AWS::EC2::Subnet::Id
-  ChefAutomatePivotalKey:
-    Type: String
-  ChefAutomateAdminPasswordLength:
-    Type: Number
-    Default: 32
   AssociatePublicIpAddress:
     Type: String
     AllowedValues:
@@ -144,26 +127,6 @@ Parameters:
     Type: String
     Default: env=DEV
 Resources:
-  OpsWorksCmSecret:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      Description: "This is a Secrets Manager secret for an OpsWorks for Chef Automate resource, containing the pivotal key and admin password necessary for the initial setup of OpsWorks for Chef Automate, as well as the SSH keypair which will be set on the instance."
-      Name: !Sub ${ProjectId}-${EnvironmentId}-opsworks-cm
-      GenerateSecretString:
-        SecretStringTemplate: !Sub '{"CHEF_AUTOMATE_PIVOTAL_KEY": "${ChefAutomatePivotalKey}","keypair": "${KeyPairName}","privatekey": "${KeyPairPrivateKey}"}'
-        GenerateStringKey: CHEF_AUTOMATE_ADMIN_PASSWORD
-        PasswordLength: !Ref ChefAutomateAdminPasswordLength
-        RequireEachIncludedType: true
-        ExcludeCharacters: '"@/\'
-      Tags:
-        - Key: EnvironmentId
-          Value: !Ref EnvironmentId
-        - Key: Contact
-          Value: !Ref Contact
-        - Key: ProjectId
-          Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
   OpsWorksCmRoles:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -215,17 +178,11 @@ Resources:
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
   OpsWorksCm:
     Type: AWS::OpsWorksCM::Server
-    DependsOn: OpsWorksCmSecret
     Properties: 
       AssociatePublicIpAddress: !Ref AssociatePublicIpAddress
       BackupRetentionCount: !Ref BackupRetentionCount
       DisableAutomatedBackup: !Ref DisableAutomatedBackup
       Engine: !Ref Engine
-      EngineAttributes: 
-        - Name: "CHEF_AUTOMATE_PIVOTAL_KEY"
-          Value: !Join ['', ['{{resolve:secretsmanager:', !Ref OpsWorksCmSecret, ':SecretString:CHEF_AUTOMATE_PIVOTAL_KEY}}' ]]
-        - Name: "CHEF_AUTOMATE_ADMIN_PASSWORD"
-          Value: !Join ['', ['{{resolve:secretsmanager:', !Ref OpsWorksCmSecret, ':SecretString:CHEF_AUTOMATE_ADMIN_PASSWORD}}' ]]
       EngineModel: !Ref EngineModel
       EngineVersion: !Ref EngineVersion
       InstanceProfileArn: !GetAtt OpsWorksCmRoles.Outputs.InstanceProfileArn
@@ -237,9 +194,7 @@ Resources:
         - !GetAtt OpsWorksCmSecurityGroup.Outputs.SecurityGroupId
       ServiceRoleArn: !GetAtt OpsWorksCmRoles.Outputs.ServiceRoleArn
       SubnetIds: 
-        - !Ref OpsWorksCmSubnetA
-        - !Ref OpsWorksCmSubnetB
-        - !Ref OpsWorksCmSubnetC
+        - !Ref OpsWorksCmSubnet
 Outputs:
   endpoint:
     Description: OpsWorksCM Endpoint
