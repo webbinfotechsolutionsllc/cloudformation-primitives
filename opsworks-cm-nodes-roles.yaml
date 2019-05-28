@@ -6,32 +6,34 @@ Resources:
   InstanceRole:
     Type: AWS::IAM::Role
     Properties:
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
       AssumeRolePolicyDocument:
-        Statement:
-        - Action:
-          - sts:AssumeRole
-          Effect: Allow
-          Principal:
-            Service:
-            - ec2.amazonaws.com
         Version: '2012-10-17'
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
       Path: /
       Policies:
-      - PolicyDocument:
-          Statement:
-          - Action:
-            - opsworks-cm:AssociateNode
-            - opsworks-cm:DescribeNodeAssociationStatus
-            Effect: Allow
-            Resource: '*'
-          Version: '2012-10-17'
-        PolicyName: InstancePolicy
+        - PolicyName: InstancePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                  - opsworks-cm:AssociateNode
+                  - opsworks-cm:DescribeNodeAssociationStatus
+                Effect: Allow
+                Resource: '*'
   InstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
       Path: /
       Roles:
-      - Ref: InstanceRole
+        - Ref: InstanceRole
       
 Outputs:
   InstanceRoleArn:
