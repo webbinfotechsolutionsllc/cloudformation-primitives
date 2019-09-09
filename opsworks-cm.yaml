@@ -79,7 +79,7 @@ Parameters:
       - true
       - false
     Default: false
-    Description: Whether or not associate a pulblic IP with the OpsWorks CM server, if it is in a public subnet
+    Description: Whether or not associate a public IP with the OpsWorks CM server, if it is in a public subnet
   BackupRetentionCount:
     Type: Number
     Default: 1
