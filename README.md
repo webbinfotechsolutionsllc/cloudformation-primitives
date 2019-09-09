@@ -14,6 +14,10 @@ Per AWS docs, these primitives must be referenced via an S3 URL by the root/pare
 
 The URL of a template that specifies the stack that you want to create as a resource. Template files can use any extension, such as .json, .yaml, .template, or .txt. The template must be stored on an Amazon S3 bucket, so the URL must have the form: https://s3.amazonaws.com/.../TemplateName.extension
 
+## Parent Example
+
+The parent_ec2_vpc.yaml template is an example parent template using nested CloudFormation primitives to create a complete set of resources necessary for a functional VPC, including the VPC itself, IGW, public and private subnets, Route Tables, DHCP Option set, etc. In this case, the parent template assumes three AZs with one public and one private subnet in each.
+
 Author: Allan Webb
 
 Email: awebb@witsolutions.com
