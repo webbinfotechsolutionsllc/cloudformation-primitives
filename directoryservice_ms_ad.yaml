@@ -9,6 +9,7 @@ Metadata:
           - VpcId
           - Name
           - ShortName
+          - Edition
           - SecretName
           - MsAdAdminPasswordLength
           - SubnetId1
@@ -30,6 +31,12 @@ Parameters:
   ShortName:
     Type: String
     Default: ShortName
+  Edition:
+    Type: String
+    Default: Standard
+    AllowedValues:
+      - Standard
+      - Enterprise
   SecretName:
     Type: String
     Default: SecretName
@@ -80,6 +87,7 @@ Resources:
       Name: !Ref Name
       ShortName: !Ref ShortName
       Password: !Join ['', ['{{resolve:secretsmanager:', !Ref MsAdSecret, ':SecretString:password}}' ]]
+      Edition: !Ref Edition
       VpcSettings:
         SubnetIds:
           - !Ref SubnetId1
