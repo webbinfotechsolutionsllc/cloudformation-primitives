@@ -17,6 +17,7 @@ Metadata:
           - SecurityGroupVpcId
           - SecurityGroupCidrIp
           - KeyPairName
+          - KeyPairPrivateKey
           - OpsWorksCmSubnet
           - AssociatePublicIpAddress
       - Label:
