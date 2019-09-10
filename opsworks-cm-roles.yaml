@@ -35,12 +35,12 @@ Resources:
       MaxSessionDuration: 14400
       AssumeRolePolicyDocument:
         Statement:
-        - Action:
-            - sts:AssumeRole
-          Effect: Allow
-          Principal:
-            Service:
-              - opsworks-cm.amazonaws.com
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - opsworks-cm.amazonaws.com
         Version: '2012-10-17'
       Path: /
 Outputs:
