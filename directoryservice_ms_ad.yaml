@@ -9,9 +9,17 @@ Metadata:
           - VpcId
           - Name
           - ShortName
-          - Password
+          - SecretName
+          - MsAdAdminPasswordLength
           - SubnetId1
           - SubnetId2
+      - Label:
+          default: Environment and Tags
+        Parameters:
+          - EnvironmentId
+          - Contact
+          - ProjectId
+          - ProjectData
 Parameters:
   VpcId:
     Description: Deploy to which VPC
@@ -22,22 +30,56 @@ Parameters:
   ShortName:
     Type: String
     Default: ShortName
-  Password:
+  SecretName:
     Type: String
-    NoEcho: true
+    Default: SecretName
+  MsAdAdminPasswordLength:
+    Type: Number
+    Default: 8
   SubnetId1:
     Description: Subnet 1
     Type: AWS::EC2::Subnet::Id
   SubnetId2:
     Description: Subnet 2
     Type: AWS::EC2::Subnet::Id
+  EnvironmentId:
+    Type: String
+    Default: dev
+  Contact:
+    Type: String
+    Default: ContactName
+  ProjectId:
+    Type: String
+    Default: ProjectId
+  ProjectData:
+    Type: String
+    Default: env=DEV
 Resources:
+  MsAdSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: "This is a Secrets Manager secret for an MS AD resource, containing the admin password necessary for the initial setup of MS AD"
+      Name: !Ref SecretName
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "admin"}'
+        GenerateStringKey: "password"
+        PasswordLength: !Ref MsAdAdminPasswordLength
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: EnvironmentId
+          Value: !Ref EnvironmentId
+        - Key: Contact
+          Value: !Ref Contact
+        - Key: ProjectId
+          Value: !Ref ProjectId
+        - Key: ProjectData
+          Value: !Ref ProjectData
   MyDirectory:
     Type: AWS::DirectoryService::MicrosoftAD
     Properties:
       Name: !Ref Name
       ShortName: !Ref ShortName
-      Password: !Ref Password
+      Password: !Join ['', ['{{resolve:secretsmanager:', !Ref MsAdSecret, ':SecretString:password}}' ]]
       VpcSettings:
         SubnetIds:
           - !Ref SubnetId1
