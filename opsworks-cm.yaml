@@ -63,8 +63,7 @@ Parameters:
     Default: 192.168.0.0/21
     Description: CIDR block for ingress rule to OpsWorks CM Server. Usually the CIDR of the VPC into which you're deploying.
   KeyPairName:
-    Type: String
-    Default: KeyPairName
+    Type: AWS::EC2::KeyPair::KeyName
     Description: Name of the SSH keypair to be set on the OpsWorks CM server.
   KeyPairPrivateKey:
     Type: String
