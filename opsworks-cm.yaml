@@ -26,6 +26,8 @@ Metadata:
           - Engine
           - EngineModel
           - EngineVersion
+          - PivotalKey
+          - AdminPassword
           - PreferredBackupWindow
           - BackupRetentionCount
           - DisableAutomatedBackup
@@ -63,6 +65,15 @@ Parameters:
     Type: String
     Default: KeyPairName
     Description: Name of the SSH keypair to be set on the OpsWorks CM server.
+  KeyPairPrivateKey:
+    Type: String
+    Default: KeyPairPrivateKey
+    Description: SSH keypair private key, for storage in AWS Secrets. 
+  PivotalKey:
+    Type: String
+  AdminPassword:
+    Type: String
+    NoEcho: True
   PreferredBackupWindow:
     Type: String
     Default: "Sat:11:00"
@@ -176,6 +187,21 @@ Resources:
         CidrIp: !Ref SecurityGroupCidrIp
         ToPort: "443"
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+  OpsWorksCmSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: "This is a Secrets Manager secret for an OpsWorks for Chef Automate resource, containing the pivotal key and admin password necessary for the initial setup of OpsWorks for Chef Automate, as well as the SSH keypair which will be set on the instance."
+      Name: !Sub ${ProjectId}-${EnvironmentId}-opsworks-cm
+      SecretString: !Sub '{"CHEF_AUTOMATE_PIVOTAL_KEY": "${PivotalKey}","keypair": "${KeyPairName}","privatekey": "${KeyPairPrivateKey}", "CHEF_AUTOMATE_ADMIN_PASSWORD": "${AdminPassword}"}'
+      Tags:
+        - Key: EnvironmentId
+          Value: !Ref EnvironmentId
+        - Key: Contact
+          Value: !Ref Contact
+        - Key: ProjectId
+          Value: !Ref ProjectId
+        - Key: ProjectData
+          Value: !Ref ProjectData
   OpsWorksCm:
     Type: AWS::OpsWorksCM::Server
     Properties: 
@@ -185,6 +211,11 @@ Resources:
       Engine: !Ref Engine
       EngineModel: !Ref EngineModel
       EngineVersion: !Ref EngineVersion
+      EngineAttributes: 
+        - Name: "CHEF_AUTOMATE_PIVOTAL_KEY"
+          Value: !Ref PivotalKey
+        - Name: "CHEF_AUTOMATE_ADMIN_PASSWORD"
+          Value: !Ref AdminPassword
       InstanceProfileArn: !GetAtt OpsWorksCmRoles.Outputs.InstanceProfileArn
       InstanceType: !Ref InstanceType
       KeyPair: !Ref KeyPairName
