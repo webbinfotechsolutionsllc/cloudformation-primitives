@@ -9,6 +9,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
         - arn:aws:iam::aws:policy/AWSOpsWorksCMInstanceProfileRole
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
       MaxSessionDuration: 14400
       AssumeRolePolicyDocument:
         Statement:
