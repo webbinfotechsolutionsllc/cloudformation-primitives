@@ -68,7 +68,8 @@ Parameters:
   KeyPairPrivateKey:
     Type: String
     Default: KeyPairPrivateKey
-    Description: SSH keypair private key, for storage in AWS Secrets. 
+    Description: SSH keypair private key, for storage in AWS Secrets.
+    NoEcho: True
   PivotalKey:
     Type: String
   AdminPassword:
