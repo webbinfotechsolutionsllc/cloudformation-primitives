@@ -3,6 +3,22 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: IAM Resources for AWS OpsWorks CM.
 
 Resources:
+  InstanceScanPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties: 
+      Description: Policy allowing an Opsworks CM server to scan AWS resources
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - ec2:DescribeInstances
+              - ssm:*
+              - ec2:DescribeRegions
+              - sts:GetCallerIdentity
+              - ec2:DescribeInstanceStatus
+              - iam:ListAccountAliases
+            Resource: "*"
   InstanceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -10,6 +26,7 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
         - arn:aws:iam::aws:policy/AWSOpsWorksCMInstanceProfileRole
         - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - !Ref InstanceScanPolicy
       MaxSessionDuration: 14400
       AssumeRolePolicyDocument:
         Statement:
