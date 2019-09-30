@@ -14,9 +14,15 @@ Per AWS docs, these primitives must be referenced via an S3 URL by the root/pare
 
 The URL of a template that specifies the stack that you want to create as a resource. Template files can use any extension, such as .json, .yaml, .template, or .txt. The template must be stored on an Amazon S3 bucket, so the URL must have the form: https://s3.amazonaws.com/.../TemplateName.extension
 
-## Parent Example
+## Parent Examples
+
+The parent template examples use the NestedTemplateBaseUrl parameter to set the S3 bucket/prefix where the nested template primitives can be called from by the parent. Set this parameter to a bucket/prefix which you have read access to and store the primitives there.
 
 The parent_ec2_vpc.yaml template is an example parent template using nested CloudFormation primitives to create a complete set of resources necessary for a functional VPC, including the VPC itself, IGW, public and private subnets, Route Tables, DHCP Option set, etc. In this case, the parent template assumes three AZs with one public and one private subnet in each.
+
+The parent opsworks-cm.yaml template is an example parent template using nested CloudFormation primitives to create a complete set of resources necessary for an OpsWorks for Chef Automate deployment.
+
+Note: there is currently an issue with setting a custom PivotalKey parameter. OpsWorks for Chef Automate doesn't currently allow you to download a starter kit with that custom pivotal key during the resource creation process. This appears to be a bug in the OpsWorks console when an opsworks-cm resource is created with CloudFormation, which never activates a starter kit download link while the server resource is created. You will have to use the OpsWorks for Chef Automate console to regenerate a new starter kit after the opsworks-cm server resource creation finishes. A custom PivotalKey should still be generated and passed into the PivotalKey parameter for the purpose of maintaining consistency with the eventual intended functionality.
 
 Author: Allan Webb
 
