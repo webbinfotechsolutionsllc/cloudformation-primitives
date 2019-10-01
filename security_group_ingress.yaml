@@ -22,11 +22,11 @@ Parameters:
   CidrIp:
     Description: If the source is a CIDR block, enter it here. If not, leave the value at None and fill in the SourceSecurityGroupId field.
     Type: String
-    Default: "None"
+    Default: ''
   SourceSecurityGroupId:
     Description: If the source is a security group, enter it here. If not, leave the value at None and fill in the CidrIp field.
     Type: String
-    Default: "None"
+    Default: ''
   IpProtocol:
     Description: Ingress rule IP Protocol. Allowed values are tcp, udp, or icmp.
     Type: String
@@ -48,8 +48,8 @@ Parameters:
     MinValue: 0
     MaxValue: 65535
 Conditions:
-  HasSourceSecurityGroupId: !Not [!Equals [!Ref SourceSecurityGroupId, "None"]]
-  HasCidrIp: !Not [!Equals [!Ref CidrIp, "None"]]
+  HasSourceSecurityGroupId: !Not [!Equals [!Ref SourceSecurityGroupId, '']]
+  HasCidrIp: !Not [!Equals [!Ref CidrIp, '']]
 Resources:
   SecurityGroupIngressFromSourceGroup:
     Type: AWS::EC2::SecurityGroupIngress
