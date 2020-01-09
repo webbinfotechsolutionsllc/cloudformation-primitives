@@ -122,10 +122,13 @@ Parameters:
   InstanceType:
     Type: String
     AllowedValues:
+      - m5.large
+      - r5.xlarge
+      - r5.2xlarge
       - m4.large
       - r4.xlarge
       - r4.2xlarge
-    Default: m4.large
+    Default: m5.large
   EnvironmentId:
     Type: String
     Default: dev
