@@ -29,6 +29,7 @@ Metadata:
           - EngineVersion
           - PivotalKey
           - AdminPassword
+          - BackupId
           - PreferredBackupWindow
           - BackupRetentionCount
           - DisableAutomatedBackup
@@ -75,6 +76,9 @@ Parameters:
   AdminPassword:
     Type: String
     NoEcho: True
+  BackupId:
+    Type: String
+    Default: ""
   PreferredBackupWindow:
     Type: String
     Default: "Sat:11:00"
@@ -141,6 +145,8 @@ Parameters:
   ProjectData:
     Type: String
     Default: env=DEV
+Conditions: 
+  UseBackupId: !Not [!Equals [!Ref BackupId, ""]]
 Resources:
   OpsWorksCmRoles:
     Type: AWS::CloudFormation::Stack
@@ -210,6 +216,7 @@ Resources:
     Type: AWS::OpsWorksCM::Server
     Properties: 
       AssociatePublicIpAddress: !Ref AssociatePublicIpAddress
+      BackupId: !If [UseBackupId, !Ref BackupId, !Ref "AWS::NoValue"]
       BackupRetentionCount: !Ref BackupRetentionCount
       DisableAutomatedBackup: !Ref DisableAutomatedBackup
       Engine: !Ref Engine
