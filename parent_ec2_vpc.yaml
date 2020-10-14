@@ -20,6 +20,7 @@ Metadata:
           - EnableDnsHostnames
           - InstanceTenancy
           - IgwName
+          - NumberOfAzs
           - PublicANatName
           - PublicBNatName
           - PublicCNatName
@@ -63,6 +64,11 @@ Parameters:
   IgwName:
     Type: String
     Default: igw
+  NumberOfAzs:
+    Type: Number
+    Default: 3
+    MinValue : 1
+    MaxValue : 3
   PublicANatName:
     Description: Name for PublicA NAT Gateway
     Type: String
@@ -148,6 +154,9 @@ Parameters:
       - false
     Type: String
     Default: false
+Conditions:
+    Create2Azs: !Or [!Equals [!Ref NumberOfAzs, 2], !Equals [!Ref NumberOfAzs, 3]]
+    Create3Azs: !Equals [!Ref NumberOfAzs, 3]
 Resources:
   MyVpc:
     Type: AWS::CloudFormation::Stack
@@ -247,6 +256,7 @@ Resources:
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${RouteTableTemplate}
   PrivateBRouteTable:
     Type: AWS::CloudFormation::Stack
+    Condition: Create2Azs
     Properties:
       Parameters:
         VpcId: !GetAtt MyVpc.Outputs.MyVpcId
@@ -267,6 +277,7 @@ Resources:
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${RouteTableTemplate}
   PrivateCRouteTable:
     Type: AWS::CloudFormation::Stack
+    Condition: Create3Azs
     Properties:
       Parameters:
         VpcId: !GetAtt MyVpc.Outputs.MyVpcId
@@ -318,6 +329,7 @@ Resources:
       RouteTableId: !GetAtt PublicRouteTable.Outputs.RouteTableId
   PublicBSubnet:
     Type: AWS::CloudFormation::Stack
+    Condition: Create2Azs
     Properties:
       Parameters:
         AvailabilityZone: !Select 
@@ -344,11 +356,13 @@ Resources:
       TimeoutInMinutes: 15
   PublicBSubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Create2Azs
     Properties:
       SubnetId: !GetAtt PublicBSubnet.Outputs.MySubnetId
       RouteTableId: !GetAtt PublicRouteTable.Outputs.RouteTableId
   PublicCSubnet:
     Type: AWS::CloudFormation::Stack
+    Condition: Create3Azs
     Properties:
       Parameters:
         AvailabilityZone: !Select 
@@ -375,6 +389,7 @@ Resources:
       TimeoutInMinutes: 15
   PublicCSubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Create3Azs
     Properties:
       SubnetId: !GetAtt PublicCSubnet.Outputs.MySubnetId
       RouteTableId: !GetAtt PublicRouteTable.Outputs.RouteTableId
@@ -410,6 +425,7 @@ Resources:
       RouteTableId: !GetAtt PrivateARouteTable.Outputs.RouteTableId
   PrivateBSubnet:
     Type: AWS::CloudFormation::Stack
+    Condition: Create2Azs
     Properties:
       Parameters:
         AvailabilityZone: !Select 
@@ -435,11 +451,13 @@ Resources:
       TimeoutInMinutes: 15
   PrivateBSubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Create2Azs
     Properties:
       SubnetId: !GetAtt PrivateBSubnet.Outputs.MySubnetId
       RouteTableId: !GetAtt PrivateBRouteTable.Outputs.RouteTableId
   PrivateCSubnet:
     Type: AWS::CloudFormation::Stack
+    Condition: Create3Azs
     Properties:
       Parameters:
         AvailabilityZone: !Select 
@@ -465,6 +483,7 @@ Resources:
       TimeoutInMinutes: 15
   PrivateCSubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: Create3Azs
     Properties:
       SubnetId: !GetAtt PrivateCSubnet.Outputs.MySubnetId
       RouteTableId: !GetAtt PrivateCRouteTable.Outputs.RouteTableId
@@ -501,6 +520,7 @@ Resources:
   PublicBNatGateway:
     DependsOn: PrimaryIgwAttachment
     Type: AWS::EC2::NatGateway
+    Condition: Create2Azs
     Properties:
       AllocationId:
         Fn::GetAtt:
@@ -520,10 +540,12 @@ Resources:
           Value: !Ref ProjectData
   PublicBNatEip:
     Type: AWS::EC2::EIP
+    Condition: Create2Azs
     Properties:
       Domain: vpc
   PrivatBNatRoute:
     Type: AWS::EC2::Route
+    Condition: Create2Azs
     Properties:
       RouteTableId: !GetAtt PrivateBRouteTable.Outputs.RouteTableId
       DestinationCidrBlock: 0.0.0.0/0
@@ -531,6 +553,7 @@ Resources:
   PublicCNatGateway:
     DependsOn: PrimaryIgwAttachment
     Type: AWS::EC2::NatGateway
+    Condition: Create3Azs
     Properties:
       AllocationId:
         Fn::GetAtt:
@@ -549,11 +572,13 @@ Resources:
         - Key: ProjectData
           Value: !Ref ProjectData
   PublicCNatEip:
+    Condition: Create3Azs
     Type: AWS::EC2::EIP
     Properties:
       Domain: vpc
   PrivatCNatRoute:
     Type: AWS::EC2::Route
+    Condition: Create3Azs
     Properties:
       RouteTableId: !GetAtt PrivateCRouteTable.Outputs.RouteTableId
       DestinationCidrBlock: 0.0.0.0/0
