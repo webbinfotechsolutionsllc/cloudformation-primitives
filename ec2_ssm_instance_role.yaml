@@ -39,7 +39,7 @@ Resources:
                 - ec2.amazonaws.com
         Version: '2012-10-17'
       Path: /
-      RoleName: !Join [ "", [ "aws-ssm-cw-", !Ref "AWS::Region", !Ref "AWS::StackName" ] ]
+      RoleName: !Join [ "", [ "aws-ssm-cw-", !Ref "AWS::Region", "-", !Ref "AWS::StackName" ] ]
   InstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
