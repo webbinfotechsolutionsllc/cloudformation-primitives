@@ -90,4 +90,4 @@ Outputs:
     Description: The ID of the VPC
     Value: !Ref MyVpc
     Export:
-      Name: !Sub "${AWS::StackName}-VPCID"
+      Name: !Sub "${AWS::StackName}-vpcid"
