@@ -18,9 +18,8 @@ Metadata:
           - AllocationIds
           - CrossZoneEnabled
           - EnvironmentId
-          - AdminContact
+          - Contact
           - ProjectId
-          - ProjectData
 Parameters:
   Scheme:
     Description: Defines whether the load balancer is internal or internet-facing
@@ -68,15 +67,12 @@ Parameters:
   EnvironmentId:
     Type: String
     Default: EnvironmentId
-  AdminContact:
+  Contact:
     Type: String
     Default: UserName
   ProjectId:
     Type: String
     Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=ENV
 Conditions: 
   S3AccessLogsEnabled: !Equals [!Ref S3AccessLogsEnabled, true]
 Resources:
@@ -114,12 +110,10 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${ProjectId}-${EnvironmentId}-nlb-${Scheme}
-        - Key: admin_contact
-          Value: !Ref AdminContact
-        - Key: service_id
+        - Key: Contact
+          Value: !Ref Contact
+        - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: service_data
-          Value: !Ref ProjectData
 Outputs:
   LoadBalancerArn:
     Description: Load Balancer ARN

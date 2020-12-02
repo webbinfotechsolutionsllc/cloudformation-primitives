@@ -11,9 +11,8 @@ Metadata:
         Parameters: 
           - AppName
           - EnvironmentId
-          - AdminContact
+          - Contact
           - ProjectId
-          - ProjectData
           - HealthCheckIntervalSeconds
           - HealthCheckPath
           - HealthCheckPort
@@ -32,15 +31,12 @@ Parameters:
   EnvironmentId:
     Type: String
     Default: EnvironmentId
-  AdminContact:
+  Contact:
     Type: String
     Default: SomeUser
   ProjectId:
     Type: String
     Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=ENV
   HealthCheckIntervalSeconds:
     Description: Health check interval in seconds
     Type: Number
@@ -109,12 +105,10 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${ProjectId}-${EnvironmentId}-${AppName}
-        - Key: admin_contact
-          Value: !Ref AdminContact
-        - Key: service_id
+        - Key: Contact
+          Value: !Ref Contact
+        - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: service_data
-          Value: !Ref ProjectData
       VpcId: !Ref VpcId
 Outputs:
   LoadBalancerTargetGroupArn:
