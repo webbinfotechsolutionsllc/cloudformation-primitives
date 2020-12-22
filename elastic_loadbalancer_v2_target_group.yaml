@@ -50,12 +50,16 @@ Parameters:
     Type: String
     Default: traffic-port
   HealthCheckProtocol:
-    Description: Health check protocol
+    Description: The protocol the load balancer uses when performing health checks on targets. For Application Load Balancers, the default is HTTP. For Network Load Balancers and Gateway Load Balancers, the default is TCP. The TCP protocol is not supported for health checks if the protocol of the target group is HTTP or HTTPS. The GENEVE, TLS, UDP, and TCP_UDP protocols are not supported for health checks.
     Type: String
     Default: HTTP
     AllowedValues: 
       - HTTP
       - HTTPS
+      - GENEVETCP
+      - TCP_UDP
+      - TLS
+      - UDP
   HealthCheckTimeoutSeconds:
     Description: Health check interval in seconds
     Type: Number
@@ -77,12 +81,16 @@ Parameters:
     Type: Number
     Default: 80
   Protocol:
-    Description: Back end protocol. Can be overridden by registration.
+    Description: The protocol to use for routing traffic to the targets. For Application Load Balancers, the supported protocols are HTTP and HTTPS. For Network Load Balancers, the supported protocols are TCP, TLS, UDP, or TCP_UDP. For Gateway Load Balancers, the supported protocol is GENEVE. A TCP_UDP listener must be associated with a TCP_UDP target group. If the target is a Lambda function, this parameter does not apply.
     Type: String
     Default: HTTP
     AllowedValues: 
       - HTTP
       - HTTPS
+      - GENEVETCP
+      - TCP_UDP
+      - TLS
+      - UDP
   VpcId:
     Description: VPC ID for target group
     Type: AWS::EC2::VPC::Id
