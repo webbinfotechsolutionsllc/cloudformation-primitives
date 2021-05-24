@@ -30,7 +30,7 @@ Parameters:
     Default: Security Group Description
   ShortName:
     Type: String
-    Default: ShortName
+    Default: sg
 Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
