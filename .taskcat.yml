@@ -1,0 +1,8 @@
+project:
+  name: cloudformation-primitives
+  regions:
+  - us-west-1
+  - us-west-2
+tests:
+  vpc:
+    template: ./ec2_vpc.yaml

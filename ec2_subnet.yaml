@@ -19,7 +19,6 @@ Metadata:
           - EnvironmentId
           - Contact
           - ProjectId
-          - ProjectData
 
 Parameters:
   Name:
@@ -34,9 +33,6 @@ Parameters:
   ProjectId:
     Type: String
     Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=DEV
   AvailabilityZone:
     Description: Availability zone of the subnet
     Type: AWS::EC2::AvailabilityZone::Name
@@ -74,8 +70,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
 
 Outputs:
   MySubnetId:

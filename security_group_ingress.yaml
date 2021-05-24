@@ -11,6 +11,7 @@ Metadata:
           - GroupId
           - CidrIp
           - SourceSecurityGroupId
+          - SourcePrefixListId
           - IpProtocol
           - FromPort
           - ToPort
@@ -24,6 +25,10 @@ Parameters:
     Type: String
     Default: ''
   SourceSecurityGroupId:
+    Description: If the source is a security group, enter it here. If not, leave the value blank and fill in the CidrIp field instead. One or the other must be populated, but not both.
+    Type: String
+    Default: ''
+  SourcePrefixListId:
     Description: If the source is a security group, enter it here. If not, leave the value blank and fill in the CidrIp field instead. One or the other must be populated, but not both.
     Type: String
     Default: ''
@@ -49,6 +54,7 @@ Parameters:
     MaxValue: 65535
 Conditions:
   HasSourceSecurityGroupId: !Not [!Equals [!Ref SourceSecurityGroupId, '']]
+  HasSourcePrefixListId: !Not [!Equals [!Ref SourcePrefixListId, '']]
   HasCidrIp: !Not [!Equals [!Ref CidrIp, '']]
 Resources:
   SecurityGroupIngressFromSourceGroup:
@@ -68,4 +74,13 @@ Resources:
       GroupId: !Ref GroupId
       FromPort: !Ref FromPort
       CidrIp: !Ref CidrIp
+      ToPort: !Ref ToPort
+  SecurityGroupIngressFromSourcePrefixList:
+    Type: AWS::EC2::SecurityGroupIngress
+    Condition: HasSourcePrefixListId
+    Properties:
+      IpProtocol: !Ref IpProtocol
+      GroupId: !Ref GroupId
+      FromPort: !Ref FromPort
+      SourcePrefixListId: !Ref SourcePrefixListId
       ToPort: !Ref ToPort

@@ -13,23 +13,15 @@ Metadata:
           default: Environment and Tags
         Parameters: 
           - EnvironmentId
-          - Contact
           - ProjectId
-          - ProjectData
           - ShortName
 Parameters:
   EnvironmentId:
     Type: String
     Default: test
-  Contact:
-    Type: String
-    Default: Name
   ProjectId:
     Type: String
     Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=TEST
   VpcId:
     Description: VPC in which to deploy the security group
     Type: AWS::EC2::VPC::Id
@@ -47,12 +39,6 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${ProjectId}-${EnvironmentId}-${ShortName}
-        - Key: contact
-          Value: !Ref Contact
-        - Key: project_id
-          Value: !Ref ProjectId
-        - Key: project_data
-          Value: !Ref ProjectData
       VpcId: !Ref VpcId
 Outputs:
   SecurityGroupId:
