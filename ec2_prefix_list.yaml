@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: CloudFormation template primitive which creates an Ec2 Prefix List.
+Metadata: 
+  AWS::CloudFormation::Interface: 
+    ParameterGroups: 
+      - Label: 
+          default: Prefix List Parameters
+        Parameters: 
+          - PrefixListName
+          - PrefixListMaxEntries
+    ParameterLabels:
+      PrefixListName:
+        default: Prefix List Name
+      PrefixListMaxEntries:
+        default: Prefix List Max Entries
+Parameters: 
+  PrefixListName:
+    Type: String
+    Default: <name>
+  PrefixListMaxEntries:
+    Type: Number
+    Default: 3
+    MinValue: 1
+    MaxValue: 100
+Resources: 
+  PrefixList:
+    Type: AWS::EC2::PrefixList
+    Properties:
+      PrefixListName: !Ref PrefixListName
+      AddressFamily: IPv4
+      MaxEntries: !Ref PrefixListMaxEntries
+      Entries:
+        - Cidr: "10.0.0.0/8"
+          Description: "RFC1918"
+        - Cidr: "172.16.0.0/12"
+          Description: "RFC1918"
+        - Cidr: "192.168.0.0/16"
+          Description: "RFC1918"
+      Tags:
+        - Key: "Name"
+          Value: !Ref PrefixListName
+Outputs:
+  PrefixListId:
+    Description: The ID of the Prefix List
+    Value: !Ref PrefixList
+    Export:
+      Name: !Sub "${AWS::StackName}-id"
