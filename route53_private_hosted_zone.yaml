@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: CloudFormation template primitive which creates Route 53 Private Hosted Zone.
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Zone Details
+        Parameters:
+          - ZoneName
+          - ZoneComment
+          - VpcId
+          - VpcRegion
+      - Label:
+          default: Tags
+        Parameters:
+          - EnvironmentId
+          - ProjectId
+          - Contact
+Parameters:
+  ZoneName:
+    Type: String
+    Default: foo.domain.com
+  VpcId:
+    Description: VPC in which this zone will be resolved. One included by default. Modify template if more VPCs required. AWS CLI commands required to share to VPCs in other accounts.
+    Type: String
+  VpcRegion:
+    Description: VPC Region.
+    Type: String
+  ZoneComment:
+    Description: Zone Comment
+    Type: String
+  EnvironmentId:
+    Type: String
+    Default: dev
+  Contact:
+    Type: String
+    Default: Name
+  ProjectId:
+    Type: String
+    Default: ProjectId
+Resources:
+  Route53HostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: !Ref ZoneName
+      HostedZoneConfig:
+        Comment: !Ref ZoneComment
+      VPCs: 
+        - VPCId: !Ref VpcId
+          VPCRegion: !Ref VpcRegion
+      HostedZoneTags:
+        - Key: Name
+          Value: !Ref ZoneName
+        - Key: EnvironmentId
+          Value: !Ref EnvironmentId
+        - Key: Contact
+          Value: !Ref Contact
+        - Key: ProjectId
+          Value: !Ref ProjectId
+Outputs:
+  Route53HostedZoneId:
+    Description: The ID of the Private Hosted Zone
+    Value: !Ref Route53HostedZone
+    Export:
+      Name: !Sub "${AWS::StackName}-id"
