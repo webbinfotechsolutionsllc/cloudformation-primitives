@@ -1,8 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-
-Description:
- CloudFormation template primitive which creates a classic elastic load balancer with one listener. Due to the fact that listeners are not separate resources like they are with ALBs, this primitive should only be called if you are only configuring a single listener.
-
+Description: CloudFormation template primitive which creates a classic elastic load balancer with one listener. Due to the fact that listeners are not separate resources like they are with ALBs, this primitive should only be called if you are only configuring a single listener.
 Metadata: 
   AWS::CloudFormation::Interface: 
     ParameterGroups: 
@@ -21,7 +18,6 @@ Metadata:
           - EnvironmentId
           - Contact
           - ProjectId
-          - ProjectData
           - Subnets
           - CrossZoneLoadBalancing
           - SecurityGroups

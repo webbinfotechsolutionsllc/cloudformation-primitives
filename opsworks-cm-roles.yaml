@@ -1,7 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-
 Description: IAM Resources for AWS OpsWorks CM.
-
 Resources:
   InstanceScanPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -65,6 +63,10 @@ Outputs:
   InstanceProfileArn:
     Description: InstanceProfileArn
     Value: !GetAtt [InstanceProfile, Arn]
+    Export:
+      Name: !Sub "${AWS::StackName}-profile-arn"
   ServiceRoleArn:
     Description: ServiceRoleArn
     Value: !GetAtt [ServiceRole, Arn]
+    Export:
+      Name: !Sub "${AWS::StackName}-role-arn"

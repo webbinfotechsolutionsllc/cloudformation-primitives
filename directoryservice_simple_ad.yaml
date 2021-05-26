@@ -20,7 +20,6 @@ Metadata:
           - EnvironmentId
           - Contact
           - ProjectId
-          - ProjectData
 Parameters:
   VpcId:
     Description: Deploy to which VPC
@@ -66,9 +65,6 @@ Parameters:
   ProjectId:
     Type: String
     Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=DEV
 Resources:
   SimpleAdSecret:
     Type: AWS::SecretsManager::Secret
@@ -87,8 +83,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
   MyDirectory:
     Type: AWS::DirectoryService::SimpleAD
     Properties:
@@ -122,8 +116,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
   SimpleAdDhcpOptionsAssociation:
     Type: AWS::EC2::VPCDHCPOptionsAssociation
     Properties: 
@@ -155,15 +147,22 @@ Outputs:
     Description: The ID of the directory
     Value: !Ref MyDirectory
     Export:
-      Name: !Sub ${AWS::StackName}-${ShortName}-SIMPLEADID
+      Name: !Sub "${AWS::StackName}-${ShortName}-id"
   SimpleAdInstanceRoleName:
     Value: !Ref SimpleAdInstanceRole
+    Export:
+      Name: !Sub "${AWS::StackName}-role-name"
   SimpleAdInstanceProfileName:
     Value: !Ref SimpleAdInstanceProfile
+    Export:
+      Name: !Sub "${AWS::StackName}-profile-name"
   SimpleAdInstanceRoleArn:
     Description: InstanceRoleArn
     Value: !GetAtt [SimpleAdInstanceRole, Arn]
+    Export:
+      Name: !Sub "${AWS::StackName}-role-arn"
   SimpleAdInstanceProfileArn:
     Description: InstanceProfileArn
     Value: !GetAtt [SimpleAdInstanceProfile, Arn]
-
+    Export:
+      Name: !Sub "${AWS::StackName}-profile-arn"

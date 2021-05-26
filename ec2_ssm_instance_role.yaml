@@ -49,3 +49,5 @@ Outputs:
   InstanceProfileArn:
     Description: InstanceProfileArn
     Value: !GetAtt [InstanceProfile, Arn]
+    Export:
+      Name: !Sub "${AWS::StackName}-arn"

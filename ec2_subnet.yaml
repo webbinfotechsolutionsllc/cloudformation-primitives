@@ -1,7 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-
 Description: CloudFormation template primitive which creates a VPC subnet resource.
-
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -19,7 +17,6 @@ Metadata:
           - EnvironmentId
           - Contact
           - ProjectId
-
 Parameters:
   Name:
     Type: String
@@ -52,7 +49,6 @@ Parameters:
   VpcId:
     Description: VPC ID for the subnet to be attached to
     Type: AWS::EC2::VPC::Id
-
 Resources:
   MySubnet:
     Type: AWS::EC2::Subnet
@@ -70,10 +66,9 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-
 Outputs:
   MySubnetId:
     Description: The ID of the subnet
     Value: !Ref MySubnet
     Export:
-      Name: !Sub "${AWS::StackName}-SubnetID"
+      Name: !Sub "${AWS::StackName}-id"

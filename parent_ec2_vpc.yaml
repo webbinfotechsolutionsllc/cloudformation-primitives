@@ -41,7 +41,6 @@ Metadata:
           - EnvironmentId
           - Contact
           - ProjectId
-          - ProjectData
 Parameters:
   NestedTemplateBaseUrl:
     Type: String
@@ -93,9 +92,6 @@ Parameters:
   ProjectId:
     Type: String
     Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=DEV
   VpcCidrBlock:
     Description: Primary CIDR Block for the VPC
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
@@ -170,7 +166,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -178,8 +173,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${VpcTemplate}
       TimeoutInMinutes: 15
   PrimaryInternetGateway:
@@ -190,7 +183,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -198,8 +190,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${IgwTemplate}
       TimeoutInMinutes: 15
   PrimaryIgwAttachment:
@@ -216,7 +206,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -224,8 +213,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${RouteTableTemplate}
   PublicInternetRoute:
     Type: AWS::EC2::Route
@@ -243,7 +230,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -251,8 +237,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${RouteTableTemplate}
   PrivateBRouteTable:
     Type: AWS::CloudFormation::Stack
@@ -264,7 +248,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -272,8 +255,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${RouteTableTemplate}
   PrivateCRouteTable:
     Type: AWS::CloudFormation::Stack
@@ -285,7 +266,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -293,8 +273,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${RouteTableTemplate}
   PublicASubnet:
     Type: AWS::CloudFormation::Stack
@@ -310,7 +288,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -318,8 +295,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SubnetTemplate}
       TimeoutInMinutes: 15
   PublicASubnetRouteTableAssociation:
@@ -342,7 +317,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -350,8 +324,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SubnetTemplate}
       TimeoutInMinutes: 15
   PublicBSubnetRouteTableAssociation:
@@ -375,7 +347,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -383,8 +354,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SubnetTemplate}
       TimeoutInMinutes: 15
   PublicCSubnetRouteTableAssociation:
@@ -406,7 +375,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -414,8 +382,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SubnetTemplate}
       TimeoutInMinutes: 15
   PrivateASubnetRouteTableAssociation:
@@ -437,7 +403,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -445,8 +410,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SubnetTemplate}
       TimeoutInMinutes: 15
   PrivateBSubnetRouteTableAssociation:
@@ -469,7 +432,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       Tags:
         - Key: EnvironmentId
           Value: !Ref EnvironmentId
@@ -477,8 +439,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SubnetTemplate}
       TimeoutInMinutes: 15
   PrivateCSubnetRouteTableAssociation:
@@ -505,8 +465,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
   PublicANatEip:
     Type: AWS::EC2::EIP
     Properties:
@@ -536,8 +494,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
   PublicBNatEip:
     Type: AWS::EC2::EIP
     Condition: Create2Azs
@@ -569,8 +525,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
   PublicCNatEip:
     Condition: Create3Azs
     Type: AWS::EC2::EIP
@@ -594,4 +548,3 @@ Outputs:
     Value: !GetAtt PrimaryInternetGateway.Outputs.IgwId
   PublicRouteTableId:
     Value: !GetAtt PublicRouteTable.Outputs.RouteTableId
-

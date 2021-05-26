@@ -16,7 +16,6 @@ Metadata:
           - EnvironmentId
           - Contact
           - ProjectId
-          - ProjectData
 
 Parameters:
   Name:
@@ -31,9 +30,7 @@ Parameters:
   ProjectId:
     Type: String
     Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=DEV
+
   VpcId:
     Description: VPC ID to associate with the route table
     Type: AWS::EC2::VPC::Id
@@ -52,8 +49,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
 
 Outputs:
   RouteTableId:

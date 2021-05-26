@@ -1,7 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-
 Description: AWS OpsWorks for Chef Automate - IAM Resource for nodes
-
 Resources:
   InstanceRole:
     Type: AWS::IAM::Role
@@ -35,11 +33,14 @@ Resources:
       Path: /
       Roles:
         - Ref: InstanceRole
-      
 Outputs:
   InstanceRoleArn:
     Description: InstanceRoleArn
     Value: !GetAtt [InstanceRole, Arn]
+    Export:
+      Name: !Sub "${AWS::StackName}-role-arn"
   InstanceProfileArn:
     Description: InstanceProfileArn
     Value: !GetAtt [InstanceProfile, Arn]
+    Export:
+      Name: !Sub "${AWS::StackName}-profile-arn"

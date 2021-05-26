@@ -1,8 +1,5 @@
----
 AWSTemplateFormatVersion: "2010-09-09"
-
 Description: CloudFormation template primitive which creates a load balancer v2 listener. Intended to be used as part of a nested CloudFormation template to create one or more listeners.
-
 Metadata: 
   AWS::CloudFormation::Interface: 
     ParameterGroups: 
@@ -16,7 +13,6 @@ Metadata:
           - Port
           - Protocol
           - SslPolicy
-
 Parameters:
   AppName:
     Type: String
@@ -46,10 +42,8 @@ Parameters:
     Description: SSL Policy for listener
     Type: String
     Default: ELBSecurityPolicy-2015-05
-
 Conditions: 
   IsHttps: !Equals [!Ref Protocol, "HTTPS"]
-
 Resources:
   LoadBalancerListener:
     Type: AWS::ElasticLoadBalancingV2::Listener

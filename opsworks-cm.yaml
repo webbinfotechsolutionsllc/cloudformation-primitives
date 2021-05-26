@@ -40,7 +40,6 @@ Metadata:
           - EnvironmentId
           - Contact
           - ProjectId
-          - ProjectData
 Parameters:
   NestedTemplateBaseUrl:
     Type: String
@@ -142,9 +141,6 @@ Parameters:
   ProjectId:
     Type: String
     Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=DEV
 Conditions: 
   UseBackupId: !Not [!Equals [!Ref BackupId, ""]]
 Resources:
@@ -166,7 +162,6 @@ Resources:
         EnvironmentId: !Ref EnvironmentId
         Contact: !Ref Contact
         ProjectId: !Ref ProjectId
-        ProjectData: !Ref ProjectData
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupTemplate}
       Tags:
         - Key: EnvironmentId
@@ -175,8 +170,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
   OpsWorksCmSecurityGroupIngress22:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -210,8 +203,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
   OpsWorksCm:
     Type: AWS::OpsWorksCM::Server
     Properties: 
@@ -241,3 +232,4 @@ Outputs:
   endpoint:
     Description: OpsWorksCM Endpoint
     Value: !GetAtt [OpsWorksCm, Endpoint]
+    

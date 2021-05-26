@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: CloudFormation template primitive which creates an Ec2 Prefix List.
+Description: CloudFormation template primitive which creates an Ec2 Prefix List for the three standard RFC1918 private IP CIDR blocks.
 Metadata: 
   AWS::CloudFormation::Interface: 
     ParameterGroups: 

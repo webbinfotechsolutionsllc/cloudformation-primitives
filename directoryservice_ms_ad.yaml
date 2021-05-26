@@ -20,7 +20,6 @@ Metadata:
           - EnvironmentId
           - Contact
           - ProjectId
-          - ProjectData
 Parameters:
   VpcId:
     Description: Deploy to which VPC
@@ -58,9 +57,6 @@ Parameters:
   ProjectId:
     Type: String
     Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=DEV
 Resources:
   MsAdSecret:
     Type: AWS::SecretsManager::Secret
@@ -79,8 +75,6 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
   MyDirectory:
     Type: AWS::DirectoryService::MicrosoftAD
     Properties:

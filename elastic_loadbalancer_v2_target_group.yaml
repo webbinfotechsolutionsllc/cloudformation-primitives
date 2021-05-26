@@ -1,8 +1,5 @@
----
 AWSTemplateFormatVersion: "2010-09-09"
-
 Description: CloudFormation template primitive which creates a load balancer v2 target group. Intended to be used as part of a nested CloudFormation template to create one or more target groups.
-
 Metadata: 
   AWS::CloudFormation::Interface: 
     ParameterGroups: 

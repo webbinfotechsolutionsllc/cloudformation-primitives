@@ -20,7 +20,6 @@ Metadata:
           - EnvironmentId
           - Contact
           - ProjectId
-          - ProjectData
 
 Parameters:
   EnvironmentId:
@@ -32,9 +31,7 @@ Parameters:
   ProjectId:
     Type: String
     Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=DEV
+
   AccessControl:
     Description: Canned ACL. Default is Private, and should not be changed unless you know exactly why you're changing it. See https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
     AllowedValues:
@@ -100,8 +97,7 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-        - Key: ProjectData
-          Value: !Ref ProjectData
+
       VersioningConfiguration:
         Status: !Ref VersioningConfiguration
     DeletionPolicy: Delete

@@ -1,7 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-
 Description: CloudFormation template primitive which creates a security group ingress rule.
-
 Metadata: 
   AWS::CloudFormation::Interface: 
     ParameterGroups: 
@@ -15,7 +13,6 @@ Metadata:
           - IpProtocol
           - FromPort
           - ToPort
-
 Parameters:
   GroupId:
     Description: GroupId with which to apply this ingress rule.
