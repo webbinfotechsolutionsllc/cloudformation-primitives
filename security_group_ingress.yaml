@@ -18,15 +18,15 @@ Parameters:
     Description: GroupId with which to apply this ingress rule.
     Type: String
   CidrIp:
-    Description: If the source is a CIDR block, enter it here. If not, leave the value blank and fill in the SourceSecurityGroupId field instead. One or the other must be populated, but not both.
+    Description: If the source is a CIDR block, enter it here. If not, leave the value blank and fill in the SourceSecurityGroupId or SourcePrefixListId field instead. One of the three must be populated, but only one.
     Type: String
     Default: ''
   SourceSecurityGroupId:
-    Description: If the source is a security group, enter it here. If not, leave the value blank and fill in the CidrIp field instead. One or the other must be populated, but not both.
+    Description: If the source is a security group, enter it here. If not, leave the value blank and fill in the CidrIp or SourcePrefixListId field instead. One of the three must be populated, but only one.
     Type: String
     Default: ''
   SourcePrefixListId:
-    Description: If the source is a security group, enter it here. If not, leave the value blank and fill in the CidrIp field instead. One or the other must be populated, but not both.
+    Description: If the source is a security group, enter it here. If not, leave the value blank and fill in the CidrIp or SourceSecurityGroupId field instead. One of the three must be populated, but only one.
     Type: String
     Default: ''
   IpProtocol:
