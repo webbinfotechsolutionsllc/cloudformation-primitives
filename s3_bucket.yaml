@@ -1,8 +1,5 @@
----
 AWSTemplateFormatVersion: "2010-09-09"
-
 Description: CloudFormation template primitive which creates an S3 bucket resource.
-
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -20,7 +17,6 @@ Metadata:
           - EnvironmentId
           - Contact
           - ProjectId
-
 Parameters:
   EnvironmentId:
     Type: String
@@ -31,7 +27,6 @@ Parameters:
   ProjectId:
     Type: String
     Default: ProjectId
-
   AccessControl:
     Description: Canned ACL. Default is Private, and should not be changed unless you know exactly why you're changing it. See https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
     AllowedValues:
@@ -72,11 +67,9 @@ Parameters:
       - Suspended
     Type: String
     Default: Enabled
-
 Conditions:
   HasBucketName: !Not [!Equals [!Ref BucketName, ""]]
   HasKmsMasterKeyId: !Not [!Equals [!Ref KmsMasterKeyId, ""]]
-
 Resources:
   MyBucket:
     Type: AWS::S3::Bucket
@@ -97,12 +90,12 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
-
       VersioningConfiguration:
         Status: !Ref VersioningConfiguration
     DeletionPolicy: Delete
-
 Outputs:
   BucketName:
     Value: !Ref 'MyBucket'
     Description: Name of the Amazon S3 bucket.
+    Export:
+      Name: !Sub ${AWS::StackName}-bucket
