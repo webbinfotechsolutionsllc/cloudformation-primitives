@@ -64,7 +64,7 @@ Parameters:
     Type: String
     Default: Allows access to required application ports on the EC2 instance.
   PrefixListId:
-    Description: Prefix List ID used in Cluster Security Group
+    Description: Prefix List ID used in Instance Security Group
     Type: String
     Default: <prefixlistid>
   EbsVolumeSize:
