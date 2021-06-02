@@ -17,16 +17,45 @@ Metadata:
           - EnvironmentId
           - Contact
           - ProjectId
+          - CostCenter
+          - Confidentiality
+          - Compliance
 Parameters:
   EnvironmentId:
     Type: String
     Default: dev
-  Contact:
-    Type: String
-    Default: Name
   ProjectId:
     Type: String
     Default: ProjectId
+  Contact:
+    Type: String
+    Description: The Contact tag is used to designate business owner(s) email address associated with the given AWS resource for sending outage or maintenance notifications
+    AllowedPattern: '^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+    ConstraintDescription: provide a valid email address.
+  CostCenter:
+    Type: String
+    Description: The CostCenter tag is used to designate the cost center associated with the project of the given AWS resource.
+    AllowedPattern: "^[a-zA-Z0-9]+$"
+    ConstraintDescription:  provide a valid cost center
+  Confidentiality:
+    Type: String
+    Description: The Confidentiality tag is used to designate the confidentiality classification of the data that is associated with the resource.
+    AllowedValues:
+      - public
+      - private
+      - confidential
+      - pii/phi
+  Compliance:
+    Type: String
+    Description: The Compliance tag is used to specify the Compliance level for the AWS resource.
+    Default: other
+    AllowedValues:
+      - hipaa
+      - sox
+      - fips
+      - gxp
+      - other
+      - none
   AccessControl:
     Description: Canned ACL. Default is Private, and should not be changed unless you know exactly why you're changing it. See https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
     AllowedValues:
@@ -90,6 +119,12 @@ Resources:
           Value: !Ref Contact
         - Key: ProjectId
           Value: !Ref ProjectId
+        - Key: CostCenter
+          Value: !Ref CostCenter
+        - Key: Confidentiality
+          Value: !Ref Confidentiality
+        - Key: Compliance
+          Value: !Ref Compliance
       VersioningConfiguration:
         Status: !Ref VersioningConfiguration
     DeletionPolicy: Delete
