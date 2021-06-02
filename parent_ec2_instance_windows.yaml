@@ -1,0 +1,484 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  Parent template which creates a Windows EC2 instance,
+  security groups/roles/instance profile, Cloudwatch and SSM config,
+  and installation/configuration of Tibco Spotfire.
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Nested Template S3 Parameters
+        Parameters:
+          - NestedTemplateBaseUrl
+          - S3BucketTemplate
+          - SecurityGroupTemplate
+          - SecurityGroupIngressTemplate
+      - Label: 
+          default: VPC and Security Group Parameters
+        Parameters: 
+          - VpcId
+          - InstanceSubnet
+          - InstanceSgDescription
+          - PrefixListId
+      - Label:
+          default: Instance Parameters
+        Parameters:
+          - LatestAmiId
+          - InstanceKeyName
+          - EbsVolumeSize
+          - EbsVolumeType
+          - EbsVolumeIops
+          - InstanceType
+          - DisableTermination
+          - InstanceMonitoring
+      - Label:
+          default: Tags
+        Parameters:
+          - EnvironmentId
+          - ProjectId         
+          - Contact
+          - CostCenter 
+          - Confidentiality
+          - Compliance
+Parameters:
+  NestedTemplateBaseUrl:
+    Description: URL pointing to the S3 location where nested child templates reside.
+    Type: String
+    Default: https://s3.amazonaws.com/<bucket>/<key>/
+  SecurityGroupTemplate:
+    Description: Filename of security group child template
+    Type: String
+    Default: security_group.yaml
+  S3BucketTemplate:
+    Description: Filename of S3 bucket child template
+    Type: String
+    Default: s3_bucket.yaml
+  SecurityGroupIngressTemplate:
+    Description: Filename of security ingress rule child template
+    Type: String
+    Default: security_group_ingress.yaml
+  VpcId:
+    Description: VPC in which to deploy security groups
+    Type: AWS::EC2::VPC::Id
+  InstanceSgDescription:
+    Type: String
+    Default: Allows access to required application ports on the EC2 instance.
+  PrefixListId:
+    Description: Prefix List ID used in Cluster Security Group
+    Type: String
+    Default: <prefixlistid>
+  EbsVolumeSize:
+    Description: EBS volume size
+    Type: Number
+    Default: 30
+    MinValue: 1
+    MaxValue: 16384
+  EbsVolumeType:
+    Description: EBS volume type
+    Type: String
+    Default: gp3
+    AllowedValues:
+        - gp3
+        - gp2
+        - io1
+        - io2
+  EbsVolumeIops:
+    Description: EBS IOPs
+    Type: Number
+    Default: 3000
+    MinValue: 3000
+    MaxValue: 16000
+  DisableTermination:
+    Description: Instance termination protection boolean.
+    Type: String
+    Default: false
+    AllowedValues:
+        - true
+        - false
+  InstanceType:
+    Description: Instance type.
+    Type: String
+    Default: t3a.large
+  InstanceMonitoring:
+    Description: Instance enhanced monitoring. Off by default due to cost.
+    Type: String
+    Default: false
+    AllowedValues:
+        - true
+        - false
+  InstanceSubnet:
+    Description: Instance Subnet.
+    Type: AWS::EC2::Subnet::Id
+  LatestAmiId:
+    Description: Region specific image from the Parameter Store. This is maintained by AWS and will dynamically point to the latest Amazon Linux 2 AMI.
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base
+  InstanceKeyName:
+    Type: String
+    Default: <keyName>
+  EnvironmentId:
+    Type: String
+    Default: <env>
+  ProjectId:
+    Type: String
+    Default: <project>
+  CostCenter:
+    Type: String
+    Description: The CostCenter tag is used to designate the cost center associated with the project of the given AWS resource.
+    Default: 0000
+    AllowedPattern: "^[a-zA-Z0-9]+$"
+    ConstraintDescription:  provide a valid cost center
+  Contact:
+    Type: String
+    Description: The Contact tag is used to designate business owner(s) email address associated with the given AWS resource for sending outage or maintenance notifications
+    AllowedPattern: '^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+    ConstraintDescription: provide a valid email address.
+  Confidentiality:
+    Type: String
+    Description: The Confidentiality tag is used to designate the confidentiality classification of the data that is associated with the resource.
+    Default: private
+    AllowedValues:
+      - public
+      - private
+      - confidential
+      - pii/phi
+  Compliance:
+    Type: String
+    Description: The Compliance tag is used to specify the Compliance level for the AWS resource.
+    Default: none
+    AllowedValues:
+      - hipaa
+      - sox
+      - fips
+      - gxp
+      - other
+      - none
+Resources:
+  InstanceSg:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        GroupDescription: !Ref InstanceSgDescription
+        VpcId: !Ref VpcId
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupTemplate}
+      TimeoutInMinutes: 15
+      Tags:
+        - Key: EnvironmentId
+          Value: !Ref EnvironmentId
+        - Key: ProjectId
+          Value: !Ref ProjectId
+        - Key: Contact
+          Value: !Ref Contact
+  InstanceSgIngress1:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourcePrefixListId: !Ref PrefixListId
+        FromPort: 443
+        ToPort: 443
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
+  InstanceSgIngress2:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourcePrefixListId: !Ref PrefixListId
+        FromPort: 3389
+        ToPort: 3389
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
+  SsmAssocLogs:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${S3BucketTemplate}
+      TimeoutInMinutes: 15
+      Tags:
+        - Key: EnvironmentId
+          Value: !Ref EnvironmentId
+        - Key: ProjectId
+          Value: !Ref ProjectId
+        - Key: Contact
+          Value: !Ref Contact
+        - Key: CostCenter
+          Value: !Ref CostCenter
+        - Key: Confidentiality
+          Value: !Ref Confidentiality
+        - Key: Compliance
+          Value: !Ref Compliance
+  InstanceS3Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties: 
+      Description: Policy granting the minimum S3 rights necessary for SSM functionality. This replaces the use of arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM. Also includes any necessary rights to other S3 resources.
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+            Resource: [
+                !Sub "arn:aws:s3:::aws-ssm-${AWS::Region}/*",
+                !Sub "arn:aws:s3:::aws-windows-downloads-${AWS::Region}/*",
+                !Sub "arn:aws:s3:::amazon-ssm-${AWS::Region}/*",
+                !Sub "arn:aws:s3:::amazon-ssm-packages-${AWS::Region}/*",
+                !Sub "arn:aws:s3:::${AWS::Region}-birdwatcher-prod/*",
+                !Sub "arn:aws:s3:::patch-baseline-snapshot-${AWS::Region}/*"
+            ]
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:PutObjectAcl
+              - s3:ListBucket
+            Resource: 
+              - !Sub 'arn:${AWS::Partition}:s3:::${SsmAssocLogs}/*'
+              - !Sub 'arn:${AWS::Partition}:s3:::${SsmAssocLogs}'
+  InstanceEc2Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties: 
+      Description: Policy granting access to create tags on volumes
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - ec2:Describe*
+            Resource:
+              - "*"
+          - Effect: Allow
+            Action:
+              - ec2:CreateTags
+            Resource:
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:volume/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*'
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+        - !Ref InstanceS3Policy
+        - !Ref InstanceEc2Policy
+      MaxSessionDuration: 14400
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+                - ssm.amazonaws.com
+        Version: '2012-10-17'
+      Path: /
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - Ref: InstanceRole
+  CloudwatchParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "AmazonCloudWatch-${AWS::StackName}"
+      Type: String
+      Value: |
+        {
+          "agent": {
+            "metrics_collection_interval": 60,
+            "logfile": "c:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\Logs\\amazon-cloudwatch-agent.log"
+          },
+          "metrics": {
+            "namespace": "prod/gxp-spotfire",
+            "metrics_collected": {
+              "Processor": {
+                "measurement": [
+                  {"name": "% Idle Time", "rename": "CPU_IDLE", "unit": "Percent"},
+                  "% Interrupt Time",
+                  "% User Time",
+                  "% Processor Time"
+                ],
+                "resources": [
+                  "*"
+                ]
+              },
+              "LogicalDisk": {
+                "measurement": [
+                  {"name": "% Idle Time", "unit": "Percent"},
+                  {"name": "% Disk Read Time", "rename": "DISK_READ"},
+                  "% Disk Write Time"
+                ],
+                "resources": [
+                  "*"
+                ]
+              },
+              "Memory": {
+                "metrics_collection_interval": 5,
+                "measurement": [
+                  "Available Bytes",
+                  "Cache Faults/sec",
+                  "Page Faults/sec",
+                  "Pages/sec"
+                ]
+              },
+              "Network Interface": {
+                "metrics_collection_interval": 5,
+                "measurement": [
+                  "Bytes Received/sec",
+                  "Bytes Sent/sec",
+                  "Packets Received/sec",
+                  "Packets Sent/sec"
+                ],
+                "resources": [
+                  "*"
+                ]
+              },
+              "System": {
+                "measurement": [
+                  "Context Switches/sec",
+                  "System Calls/sec",
+                  "Processor Queue Length"
+                ]
+              }
+            }
+          },
+          "logs": {
+            "logs_collected": {
+              "files": {
+                "collect_list": [
+                  {
+                    "file_path": "c:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\Logs\\amazon-cloudwatch-agent.log",
+                    "log_group_name": "amazon-cloudwatch-agent.log",
+                    "timezone": "UTC"
+                  },
+                  {
+                    "file_path": "c:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\Logs\\test.log",
+                    "log_group_name": "test.log",
+                    "timezone": "Local"
+                  }
+                ]
+              },
+              "windows_events": {
+                "collect_list": [
+                  {
+                    "event_name": "System",
+                    "event_levels": [
+                      "INFORMATION",
+                      "ERROR"
+                    ],
+                    "log_group_name": "System",
+                    "log_stream_name": "System",
+                    "event_format": "xml"
+                  },
+                  {
+                    "event_name": "CustomizedName",
+                    "event_levels": [
+                      "WARNING",
+                      "ERROR"
+                    ],
+                    "log_group_name": "CustomizedLogGroup",
+                    "log_stream_name": "CustomizedLogStream",
+                    "event_format": "xml"
+                  }
+                ]
+              }
+            },
+            "log_stream_name": "example_log_stream_name"
+          }
+        }
+      Description: Instance CloudWatch agent configuration
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      BlockDeviceMappings: 
+        - DeviceName: /dev/sda1
+          Ebs:
+            DeleteOnTermination: true
+            Encrypted: true
+            VolumeSize: !Ref EbsVolumeSize
+            VolumeType: !Ref EbsVolumeType
+            Iops: !Ref EbsVolumeIops
+      DisableApiTermination: !Ref DisableTermination
+      IamInstanceProfile: !Ref InstanceProfile
+      ImageId: !Ref LatestAmiId
+      InstanceInitiatedShutdownBehavior: stop
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref InstanceKeyName
+      SubnetId: !Ref InstanceSubnet
+      SecurityGroupIds:
+        - !GetAtt InstanceSg.Outputs.SecurityGroupId
+      Monitoring: !Ref InstanceMonitoring
+      SsmAssociations:
+        - DocumentName: AWS-ConfigureAWSPackage
+          AssociationParameters:
+            - Key: action
+              Value:
+                - Install
+            - Key: installationType
+              Value:
+                - Uninstall and reinstall
+            - Key: name
+              Value:
+                - AmazonCloudWatchAgent
+        - DocumentName: AmazonCloudWatch-ManageAgent
+          AssociationParameters:
+            - Key: action
+              Value:
+                - configure
+            - Key: mode
+              Value:
+                - ec2
+            - Key: optionalConfigurationSource
+              Value:
+                - ssm
+            - Key: optionalConfigurationLocation
+              Value:
+                - !Ref CloudwatchParameter
+            - Key: optionalRestart
+              Value:
+                - "yes"
+      UserData:
+        Fn::Base64:
+          !Sub |
+            <script>
+            msiexec.exe /i https://awscli.amazonaws.com/AWSCLIV2.msi /qn
+            </script>
+            <powershell>
+            $AWS_AVAIL_ZONE=(Invoke-WebRequest -Uri 'http://169.254.169.254/latest/meta-data/placement/availability-zone' -UseBasicParsing).Content
+            $AWS_REGION=$AWS_AVAIL_ZONE.Substring(0,$AWS_AVAIL_ZONE.length-1)
+            $AWS_INSTANCE_ID=(Invoke-WebRequest -Uri 'http://169.254.169.254/latest/meta-data/instance-id' -UseBasicParsing).Content
+            $ROOT_VOLUME_IDS=((Get-EC2Instance -Region $AWS_REGION -InstanceId $AWS_INSTANCE_ID).Instances.BlockDeviceMappings | where-object DeviceName -match '/dev/sda1').Ebs.VolumeId
+            $NETWORK_INTERFACE_IDS=(Get-EC2Instance -Region $AWS_REGION -InstanceId $AWS_INSTANCE_ID).Instances.NetworkInterfaces.NetworkInterfaceId
+            $tag = @( @{key="Name";value="${ProjectId}-${EnvironmentId}"}, @{key="ProjectId";value="${ProjectId}"}, @{key="Contact";value="${Contact}"} )
+            New-EC2Tag -Resource $ROOT_VOLUME_IDS -Region $AWS_REGION -Tag $tag
+            New-EC2Tag -Resource $NETWORK_INTERFACE_IDS -Region $AWS_REGION -Tag $tag
+            </powershell>
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectId}-${EnvironmentId}
+Outputs:
+  InstanceSecurityGroup:
+    Description: "Instance Security Group Id"
+    Value: !GetAtt InstanceSg.Outputs.SecurityGroupId
+    Export:
+      Name: !Sub "${AWS::StackName}-sg-arn"
+  InstanceProfileArn:
+    Description: "Instance Profile ARN"
+    Value: !GetAtt [InstanceProfile, Arn]
+    Export:
+      Name: !Sub "${AWS::StackName}-instance-profile-arn"
+  InstanceId:
+    Description: "Instance ID"
+    Value: !Ref Instance
+    Export:
+      Name: !Sub "${AWS::StackName}-instance-id"
+  SSMAssociationLogs:
+    Description: "SSM Association Logs"
+    Value: !Ref SsmAssocLogs
+    Export:
+      Name: !Sub "${AWS::StackName}-ssm-assoc-logs"
+  
