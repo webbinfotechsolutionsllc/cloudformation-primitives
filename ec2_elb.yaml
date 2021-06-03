@@ -64,9 +64,6 @@ Parameters:
   ProjectId:
     Type: String
     Default: ProjectId
-  ProjectData:
-    Type: String
-    Default: env=ENV
   SecurityGroups:
     Description: Comma delimited list of security groups
     Type: List<AWS::EC2::SecurityGroup::Id>
@@ -104,8 +101,6 @@ Resources:
           Value: !Ref Contact
         - Key: project_id
           Value: !Ref ProjectId
-        - Key: project_data
-          Value: !Ref ProjectData
 Outputs:
   LoadBalancerArn:
     Description: Load Balancer ARN
