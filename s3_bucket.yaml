@@ -105,7 +105,7 @@ Conditions:
   HasBucketName: !Not [!Equals [!Ref BucketName, ""]]
   HasKmsMasterKeyId: !Not [!Equals [!Ref KmsMasterKeyId, ""]]
 Resources:
-  MyBucket:
+  S3Bucket:
     Type: AWS::S3::Bucket
     Properties: 
       AccessControl: !Ref AccessControl
@@ -135,7 +135,7 @@ Resources:
     DeletionPolicy: Delete
 Outputs:
   BucketName:
-    Value: !Ref 'MyBucket'
+    Value: !Ref 'S3Bucket'
     Description: Name of the Amazon S3 bucket.
     Export:
       Name: !Sub ${AWS::StackName}-bucket
