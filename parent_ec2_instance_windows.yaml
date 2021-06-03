@@ -130,6 +130,7 @@ Parameters:
     ConstraintDescription:  provide a valid cost center
   Contact:
     Type: String
+    Default: user@domain.com
     Description: The Contact tag is used to designate business owner(s) email address associated with the given AWS resource for sending outage or maintenance notifications
     AllowedPattern: '^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
     ConstraintDescription: provide a valid email address.
@@ -194,6 +195,20 @@ Resources:
   SsmAssocLogs:
     Type: AWS::CloudFormation::Stack
     Properties:
+      Parameters:
+        Tags:
+          - Key: EnvironmentId
+            Value: !Ref EnvironmentId
+          - Key: ProjectId
+            Value: !Ref ProjectId
+          - Key: Contact
+            Value: !Ref Contact
+          - Key: CostCenter
+            Value: !Ref CostCenter
+          - Key: Confidentiality
+            Value: !Ref Confidentiality
+          - Key: Compliance
+            Value: !Ref Compliance
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${S3BucketTemplate}
       TimeoutInMinutes: 15
       Tags:
