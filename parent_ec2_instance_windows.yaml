@@ -31,8 +31,7 @@ Metadata:
           - InstanceType
           - DisableTermination
           - InstanceMonitoring
-          - S3InstallersBucket
-          - S3InstallersKey
+          - S3ProjectBucket
       - Label:
           default: Tags
         Parameters:
@@ -118,12 +117,9 @@ Parameters:
   InstanceKeyName:
     Type: String
     Default: <keyName>
-  S3InstallersBucket:
+  S3ProjectBucket:
     Type: String
     Default: "<bucket>"
-  S3InstallersKey:
-    Type: String
-    Default: "<key>"
   EnvironmentId:
     Type: String
     Default: <env>
@@ -257,8 +253,8 @@ Resources:
               - s3:GetObject
               - s3:ListBucket
             Resource: 
-              - !Sub 'arn:${AWS::Partition}:s3:::${S3InstallersBucket}'
-              - !Sub 'arn:${AWS::Partition}:s3:::${S3InstallersBucket}/${S3InstallersKey}/*'
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3ProjectBucket}'
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3ProjectBucket}/${ProjectId}/*'
   InstanceEc2Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties: 
