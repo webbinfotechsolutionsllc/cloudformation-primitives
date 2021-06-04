@@ -31,6 +31,8 @@ Metadata:
           - InstanceType
           - DisableTermination
           - InstanceMonitoring
+          - S3InstallersBucket
+          - S3InstallersKey
       - Label:
           default: Tags
         Parameters:
@@ -116,6 +118,12 @@ Parameters:
   InstanceKeyName:
     Type: String
     Default: <keyName>
+  S3InstallersBucket:
+    Type: String
+    Default: "<bucket>"
+  S3InstallersKey:
+    Type: String
+    Default: "<key>"
   EnvironmentId:
     Type: String
     Default: <env>
@@ -244,6 +252,13 @@ Resources:
             Resource: 
               - !Sub 'arn:${AWS::Partition}:s3:::${SsmAssocLogs}/*'
               - !Sub 'arn:${AWS::Partition}:s3:::${SsmAssocLogs}'
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:ListBucket
+            Resource: 
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3InstallersBucket}'
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3InstallersBucket}/${S3InstallersKey}/*'
   InstanceEc2Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties: 
@@ -399,27 +414,6 @@ Resources:
           }
         }
       Description: Instance CloudWatch agent configuration
-  SsmDocument: 
-    Type: AWS::SSM::Document
-    Properties:
-      Content:
-        schemaVersion: '2.2'
-        description: 'Run a script on Linux instances.'
-        parameters:
-          commands:
-            type: String
-            description: "(Required) The commands to run or the path to an existing script
-          on the instance."
-            default: 'echo Hello World'
-        mainSteps:
-        - action: aws:runShellScript
-          name: runCommands
-          inputs:
-            timeoutSeconds: '60'
-            runCommand:
-            - "{{ commands }}"
-      DocumentType: Command
-      Name: 'CFN_2.2_command_example'
   Instance:
     Type: AWS::EC2::Instance
     Properties:
@@ -453,23 +447,6 @@ Resources:
             - Key: name
               Value:
                 - AmazonCloudWatchAgent
-        - DocumentName: AmazonCloudWatch-ManageAgent
-          AssociationParameters:
-            - Key: action
-              Value:
-                - configure
-            - Key: mode
-              Value:
-                - ec2
-            - Key: optionalConfigurationSource
-              Value:
-                - ssm
-            - Key: optionalConfigurationLocation
-              Value:
-                - !Ref CloudwatchParameter
-            - Key: optionalRestart
-              Value:
-                - "yes"
       UserData:
         Fn::Base64:
           !Sub |
