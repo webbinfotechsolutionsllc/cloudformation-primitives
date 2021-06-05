@@ -461,7 +461,7 @@ Resources:
                 ]
               }
             },
-            "log_stream_name": "example_log_stream_name"
+            "log_stream_name": "${AWS::StackName}"
           }
         }
       Description: Instance CloudWatch agent configuration
