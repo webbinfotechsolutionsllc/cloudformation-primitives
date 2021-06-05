@@ -202,7 +202,7 @@ Resources:
       Parameters:
         IpProtocol: tcp
         GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
-        SourceGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourceSecurityGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
         FromPort: 9501
         ToPort: 9502
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
@@ -213,7 +213,7 @@ Resources:
       Parameters:
         IpProtocol: tcp
         GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
-        SourceGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourceSecurityGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
         FromPort: 7080
         ToPort: 7080
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
@@ -224,7 +224,7 @@ Resources:
       Parameters:
         IpProtocol: tcp
         GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
-        SourceGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourceSecurityGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
         FromPort: 9433
         ToPort: 9433
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
@@ -235,7 +235,7 @@ Resources:
       Parameters:
         IpProtocol: tcp
         GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
-        SourceGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourceSecurityGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
         FromPort: 7433
         ToPort: 7433
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
@@ -246,7 +246,7 @@ Resources:
       Parameters:
         IpProtocol: tcp
         GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
-        SourceGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourceSecurityGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
         FromPort: 9080
         ToPort: 9080
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
