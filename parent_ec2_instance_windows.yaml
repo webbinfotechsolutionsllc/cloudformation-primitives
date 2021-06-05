@@ -196,6 +196,61 @@ Resources:
         ToPort: 3389
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
       TimeoutInMinutes: 15
+  InstanceSgIngress3:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourceGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        FromPort: 9501
+        ToPort: 9502
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
+  InstanceSgIngress4:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourceGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        FromPort: 7080
+        ToPort: 7080
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
+  InstanceSgIngress5:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourceGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        FromPort: 9433
+        ToPort: 9433
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
+  InstanceSgIngress6:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourceGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        FromPort: 7433
+        ToPort: 7433
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
+  InstanceSgIngress7:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourceGroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        FromPort: 9080
+        ToPort: 9080
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
   SsmAssocLogs:
     Type: AWS::CloudFormation::Stack
     Properties:
