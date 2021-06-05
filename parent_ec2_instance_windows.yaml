@@ -431,18 +431,6 @@ Resources:
       SecurityGroupIds:
         - !GetAtt InstanceSg.Outputs.SecurityGroupId
       Monitoring: !Ref InstanceMonitoring
-      SsmAssociations:
-        - DocumentName: AWS-ConfigureAWSPackage
-          AssociationParameters:
-            - Key: action
-              Value:
-                - Install
-            - Key: installationType
-              Value:
-                - Uninstall and reinstall
-            - Key: name
-              Value:
-                - AmazonCloudWatchAgent
       UserData:
         Fn::Base64:
           !Sub |
