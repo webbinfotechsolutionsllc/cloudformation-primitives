@@ -360,7 +360,7 @@ Resources:
     Properties:
       Name: !Sub "AmazonCloudWatch-${AWS::StackName}"
       Type: String
-      Value: |
+      Value: !Sub |
         {
           "agent": {
             "metrics_collection_interval": 60,
