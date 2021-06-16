@@ -305,14 +305,14 @@ Resources:
     Properties:
       Name: !Sub "AmazonCloudWatch-${AWS::StackName}"
       Type: String
-      Value: |
+      Value: !Sub |
         {
           "agent": {
             "metrics_collection_interval": 60,
             "logfile": "c:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\Logs\\amazon-cloudwatch-agent.log"
           },
           "metrics": {
-            "namespace": "prod/gxp-spotfire",
+            "namespace": "${EnvironmentId}/${ProjectId}",
             "metrics_collected": {
               "Processor": {
                 "measurement": [
@@ -406,7 +406,7 @@ Resources:
                 ]
               }
             },
-            "log_stream_name": "example_log_stream_name"
+            "log_stream_name": "${EnvironmentId}-${ProjectId}-${Instance}""
           }
         }
       Description: Instance CloudWatch agent configuration
