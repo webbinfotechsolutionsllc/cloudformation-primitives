@@ -1,0 +1,106 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: CloudFormation template primitive which creates a Route53 Resolver resource.
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label: 
+          default: Parameters
+        Parameters: 
+          - Name
+          - Direction
+          - IpAddresses
+          - SecurityGroupIds
+      - Label:
+          default: Tags
+        Parameters:
+          - EnvironmentId
+          - ProjectId         
+          - Contact
+          - CostCenter 
+          - Confidentiality
+          - Compliance
+Parameters:
+  Name:
+    Type: String
+    Description: The resolver name.
+    Default: <name>
+  Direction:
+    Type: String
+    Description: The resolver type.
+    Default: INBOUND
+    AllowedValues:
+      - INBOUND
+      - OUTBOUND
+  IpAddresses:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: List of Subnet IDs from which addresses will be assigned. Choose exactly two, from different AZs.
+  SecurityGroupIds:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: List of Security Group IDs to assign to the resolver. Choose at least one.
+  EnvironmentId:
+    Type: String
+    Default: <env>
+  ProjectId:
+    Type: String
+    Default: <project>
+  CostCenter:
+    Type: String
+    Description: The CostCenter tag is used to designate the cost center associated with the project of the given AWS resource.
+    Default: 0000
+    AllowedPattern: "^[a-zA-Z0-9]+$"
+    ConstraintDescription:  provide a valid cost center
+  Contact:
+    Type: String
+    Default: user@domain.com
+    Description: The Contact tag is used to designate business owner(s) email address associated with the given AWS resource for sending outage or maintenance notifications
+    AllowedPattern: '^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+    ConstraintDescription: provide a valid email address.
+  Confidentiality:
+    Type: String
+    Description: The Confidentiality tag is used to designate the confidentiality classification of the data that is associated with the resource.
+    Default: private
+    AllowedValues:
+      - public
+      - private
+      - confidential
+      - pii/phi
+  Compliance:
+    Type: String
+    Description: The Compliance tag is used to specify the Compliance level for the AWS resource.
+    Default: none
+    AllowedValues:
+      - hipaa
+      - sox
+      - fips
+      - gxp
+      - other
+      - none
+Resources:
+  Route53Resolver:
+    Type: AWS::Route53Resolver::ResolverEndpoint
+    Properties: 
+      Direction: !Ref Direction
+      IpAddresses:
+        - SubnetId: !Select [ 0, !Ref IpAddresses]
+        - SubnetId: !Select [ 1, !Ref IpAddresses]
+      Name: !Ref Name
+      SecurityGroupIds: !Ref SecurityGroupIds
+      Tags:
+        - Key: EnvironmentId
+          Value: !Ref EnvironmentId
+        - Key: ProjectId
+          Value: !Ref ProjectId
+        - Key: Contact
+          Value: !Ref Contact
+        - Key: CostCenter
+          Value: !Ref CostCenter
+        - Key: Confidentiality
+          Value: !Ref Confidentiality
+        - Key: Compliance
+          Value: !Ref Compliance
+Outputs:
+  Route53ResolverEndpoint:
+    Description: "Route53 Resolver Endpoint"
+    Value: !GetAtt [Route53Resolver, Arn]
+    Export:
+      Name: !Sub "${AWS::StackName}-r53-arn"
