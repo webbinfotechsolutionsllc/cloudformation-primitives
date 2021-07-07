@@ -378,7 +378,7 @@ Resources:
             "logfile": "c:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\Logs\\amazon-cloudwatch-agent.log"
           },
           "metrics": {
-            "namespace": "prod/gxp-spotfire",
+            "namespace": "${EnvironmentId}/${ProjectId}",
             "metrics_collected": {
               "Processor": {
                 "measurement": [
