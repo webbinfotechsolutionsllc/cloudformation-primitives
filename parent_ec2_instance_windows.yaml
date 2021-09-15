@@ -443,7 +443,7 @@ Resources:
             $AWS_INSTANCE_ID=(Invoke-WebRequest -Uri 'http://169.254.169.254/latest/meta-data/instance-id' -UseBasicParsing).Content
             $ROOT_VOLUME_IDS=((Get-EC2Instance -Region $AWS_REGION -InstanceId $AWS_INSTANCE_ID).Instances.BlockDeviceMappings | where-object DeviceName -match '/dev/sda1').Ebs.VolumeId
             $NETWORK_INTERFACE_IDS=(Get-EC2Instance -Region $AWS_REGION -InstanceId $AWS_INSTANCE_ID).Instances.NetworkInterfaces.NetworkInterfaceId
-            $tag = @( @{key="Name";value="${ProjectId}-${EnvironmentId}"}, @{key="ProjectId";value="${ProjectId}"}, @{key="Contact";value="${Contact}"} )
+            $tag = @( @{key="Name";value="${ProjectId}-${EnvironmentId}"}, @{key="ProjectId";value="${ProjectId}"}, @{key="Contact";value="${Contact}"}, @{key="Compliance";value="${Compliance}"}, @{key="Confidentiality";value="${Confidentiality}"} )
             New-EC2Tag -Resource $ROOT_VOLUME_IDS -Region $AWS_REGION -Tag $tag
             New-EC2Tag -Resource $NETWORK_INTERFACE_IDS -Region $AWS_REGION -Tag $tag
             </powershell>
