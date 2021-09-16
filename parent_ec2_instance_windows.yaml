@@ -1,8 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: |
   Parent template which creates a Windows EC2 instance,
-  security groups/roles/instance profile, Cloudwatch and SSM config,
-  and installation/configuration of Tibco Spotfire.
+  security groups/roles/instance profile, Cloudwatch and SSM config.
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
