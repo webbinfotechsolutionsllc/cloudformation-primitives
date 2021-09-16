@@ -118,9 +118,9 @@ Parameters:
     Description: Instance Subnet.
     Type: AWS::EC2::Subnet::Id
   LatestAmiId:
-    Description: Region specific image from the Parameter Store. This is maintained by AWS and will dynamically point to the latest Amazon Linux 2 AMI.
-    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
-    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+    Description: Region-specific AMI ID.
+    Type: AWS::EC2::Image::Id
+    Default: ami-087c17d1fe0178315
   InstanceKeyName:
     Type: String
     Default: <keyName>
