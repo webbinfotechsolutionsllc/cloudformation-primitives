@@ -326,6 +326,7 @@ Resources:
               "ImageId": "${!aws:ImageId}",
               "InstanceId": "${!aws:InstanceId}",
               "InstanceType": "${!aws:InstanceType}"
+              },
             "metrics_collected": {
               "cpu": {
                 "measurement": [
@@ -382,7 +383,7 @@ Resources:
                 ]
               }
             },
-            "log_stream_name": "${EnvironmentId}-${ProjectId}-${Instance}""
+            "log_stream_name": "${EnvironmentId}-${ProjectId}-${Instance}"
           }
         }
   Instance:
