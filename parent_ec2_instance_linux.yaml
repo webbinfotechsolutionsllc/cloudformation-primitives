@@ -1,8 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: |
   Parent template which creates a Linux EC2 instance,
-  security groups/roles/instance profile, Cloudwatch and SSM config,
-  and installation/configuration of Tibco Spotfire.
+  security groups/roles/instance profile, Cloudwatch and SSM config.
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -25,6 +24,7 @@ Metadata:
         Parameters:
           - LatestAmiId
           - InstanceKeyName
+          - EbsVolumeDevice
           - EbsVolumeSize
           - EbsVolumeType
           - EbsVolumeIops
@@ -68,6 +68,13 @@ Parameters:
     Description: Prefix List ID used in Instance Security Group
     Type: String
     Default: <prefixlistid>
+  EbsVolumeDevice:
+    Description: EBS volume type
+    Type: String
+    Default: /dev/xvda
+    AllowedValues:
+        - /dev/xvda
+        - /dev/sda1
   EbsVolumeSize:
     Description: EBS volume size
     Type: Number
@@ -382,7 +389,7 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       BlockDeviceMappings: 
-        - DeviceName: /dev/sda1
+        - DeviceName: !Ref EbsVolumeDevice
           Ebs:
             DeleteOnTermination: true
             Encrypted: true
