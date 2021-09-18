@@ -32,6 +32,25 @@ Metadata:
           - DisableTermination
           - InstanceMonitoring
           - S3ProjectBucket
+          - S3ProjectKey
+      - Label:
+          default: BCBIO Config Parameters
+        Parameters:
+          - Aligner
+          - Disambiguate
+          - MarkDuplicates
+          - RemoveLcr
+          - Somatic
+          - Germline
+          - VariantRegions
+          - Effects
+          - Analysis
+          - Description
+          - S3InputFile1
+          - S3InputFile2
+          - GenomeBuild
+          - Phenotype
+          - Cores
       - Label:
           default: Tags
         Parameters:
@@ -126,7 +145,63 @@ Parameters:
     Default: <keyName>
   S3ProjectBucket:
     Type: String
-    Default: "<bucket>"
+    Default: <bucket>
+  S3ProjectKey:
+    Type: String
+    Default: <key>
+  Aligner:
+    Type: String
+    Default: bwa
+  Disambiguate:
+    Type: String
+    Default: mm10
+  MarkDuplicates:
+    Type: String
+    Default: true
+    AllowedValues:
+        - true
+        - false
+  RemoveLcr:
+    Type: String
+    Default: true
+    AllowedValues:
+        - true
+        - false
+  Somatic:
+    Type: String
+    Default: mutect2
+  Germline:
+    Type: String
+    Default: gatk-haplotype
+  VariantRegions:
+    Type: String
+    Default: /usr/local/share/bcbio/genomes/Hsapiens/hg38/coverage/capture_regions/HRD-Agilent_V6.bed
+  Effects:
+    Type: String
+    Default: vep
+  Analysis:
+    Type: String
+    Default: variant2
+  Description:
+    Type: String
+    Default: HNXF_908_PDX
+  S3InputFile1:
+    Type: String
+    Default: Oncotest-055B.pe1.fq.bz2
+  S3InputFile2:
+    Type: String
+    Default: Oncotest-055B.pe2.fq.bz2
+  GenomeBuild:
+    Type: String
+    Default: hg38
+  Phenotype:
+    Type: String
+    Default: tumor
+  Cores:
+    Type: Number
+    Default: 32
+    MinValue: 1
+    MaxValue: 64
   EnvironmentId:
     Type: String
     Default: <env>
@@ -378,12 +453,11 @@ Resources:
                   {
                     "file_path": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log",
                     "log_group_name": "amazon-cloudwatch-agent.log",
-                    "log_stream_name": "{instance_id}"
+                    "log_stream_name": "${EnvironmentId}-${ProjectId}-{instance_id}"
                   }
                 ]
               }
-            },
-            "log_stream_name": "${EnvironmentId}-${ProjectId}-${Instance}"
+            }
           }
         }
   Instance:
@@ -416,9 +490,41 @@ Resources:
             # Install packages
             package_upgrade: false
             packages:
-              - curl
-              - wget
-              - unzip
+              - git
+
+            # Write file contents
+            write_files:
+              - content: |
+                  details:
+                  - algorithm:
+                      aligner: ${Aligner}
+                      disambiguate: ${Disambiguate}
+                      mark_duplicates: ${MarkDuplicates}
+                      remove_lcr: ${RemoveLcr}
+                      variantcaller: 
+                          somatic: ${Somatic}
+                          germline: ${Germline}
+                      variant_regions: ${VariantRegions}
+                      effects: ${Effects}
+                    analysis: ${Analysis}
+                    description: ${Description}
+                    files:
+                      - ../input/${S3InputFile1}
+                      - ../input/${S3InputFile2}
+                    genome_build: ${GenomeBuild}
+                    metadata:
+                      phenotype: ${Phenotype}
+                  resources:
+                    default:
+                      cores: ${Cores}
+                  upload:
+                    method: s3
+                    bucket: ${S3ProjectBucket}
+                    folder: /output/${Description}/
+                    region: ${AWS::Region}
+                owner: root:root
+                path: ~/config/variant_calling_config.yaml
+                permissions: '0660'
 
             # Run shell commands
             runcmd:
@@ -429,7 +535,12 @@ Resources:
               - NETWORK_INTERFACE_IDS=$(aws ec2 describe-instances --region $AWS_REGION --instance-id $AWS_INSTANCE_ID --output text --query Reservations[0].Instances[0].NetworkInterfaces[0].NetworkInterfaceId)
               - aws ec2 create-tags --resources $ROOT_VOLUME_IDS --region $AWS_REGION --tags Key=Name,Value=${ProjectId}-${EnvironmentId} Key=ProjectId,Value=${ProjectId} Key=Contact,Value=${Contact} Key=Compliance,Value=${Compliance} Key=Confidentiality,Value=${Confidentiality}
               - aws ec2 create-tags --resources $NETWORK_INTERFACE_IDS --region $AWS_REGION --tags Key=Name,Value=${ProjectId}-${EnvironmentId} Key=ProjectId,Value=${ProjectId} Key=Contact,Value=${Contact} Key=Compliance,Value=${Compliance} Key=Confidentiality,Value=${Confidentiality}
- 
+              - mkdir ~/input
+              - mkdir ~/final
+              - mkdir ~/work
+              - aws s3 cp s3://${S3ProjectBucket}/${S3ProjectKey}/${S3InputFile1} ~/input/
+              - aws s3 cp sd://${S3ProjectBucket}/${S3ProjectKey}/${S3InputFile2} ~/input/
+
             output:
               init:
                 output: "> /var/log/cloud-init.out"
