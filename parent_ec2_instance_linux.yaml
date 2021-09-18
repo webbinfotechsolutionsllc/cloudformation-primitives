@@ -378,12 +378,11 @@ Resources:
                   {
                     "file_path": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log",
                     "log_group_name": "amazon-cloudwatch-agent.log",
-                    "log_stream_name": "{instance_id}"
+                    "log_stream_name": "${EnvironmentId}-${ProjectId}-{instance_id}"
                   }
                 ]
               }
-            },
-            "log_stream_name": "${EnvironmentId}-${ProjectId}-${Instance}"
+            }
           }
         }
   Instance:
