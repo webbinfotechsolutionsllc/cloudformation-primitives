@@ -66,8 +66,8 @@ Parameters:
     Default: Allows access to required application ports on the EC2 instance.
   PrefixListId:
     Description: Prefix List ID used in Instance Security Group
-    Type: String
-    Default: <prefixlistid>
+    Type: CommaDelimitedList
+    Default: <prefixlistid1>,<prefixlistid2>,...
   EbsVolumeDevice:
     Description: EBS volume type
     Type: String
@@ -187,7 +187,7 @@ Resources:
       Parameters:
         IpProtocol: tcp
         GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
-        SourcePrefixListId: !Ref PrefixListId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
         FromPort: 443
         ToPort: 443
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
@@ -198,9 +198,42 @@ Resources:
       Parameters:
         IpProtocol: tcp
         GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
-        SourcePrefixListId: !Ref PrefixListId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
         FromPort: 22
         ToPort: 22
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
+  InstanceSgIngress3:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
+        FromPort: 8080
+        ToPort: 8080
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
+  InstanceSgIngress4:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
+        FromPort: 9990
+        ToPort: 9990
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
+  InstanceSgIngress5:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
+        FromPort: 31000
+        ToPort: 31000
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
       TimeoutInMinutes: 15
   SsmAssocLogs:
