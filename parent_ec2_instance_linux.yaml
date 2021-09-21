@@ -433,6 +433,21 @@ Resources:
                     "log_group_name": "d360-authentication.log",
                     "log_stream_name": "${EnvironmentId}-${ProjectId}-{instance_id}"
                   },
+                  {
+                    "file_path": "/opt/certara/d360/logs/client_metrics.log",
+                    "log_group_name": "d360-client_metrics.log",
+                    "log_stream_name": "${EnvironmentId}-${ProjectId}-{instance_id}"
+                  },
+                  {
+                    "file_path": "/opt/certara/d360/logs/server.log",
+                    "log_group_name": "d360-server.log",
+                    "log_stream_name": "${EnvironmentId}-${ProjectId}-{instance_id}"
+                  },
+                  {
+                    "file_path": "/opt/certara/d360/logs/stats.log",
+                    "log_group_name": "d360-stats.log",
+                    "log_stream_name": "${EnvironmentId}-${ProjectId}-{instance_id}"
+                  }
                 ]
               }
             }
