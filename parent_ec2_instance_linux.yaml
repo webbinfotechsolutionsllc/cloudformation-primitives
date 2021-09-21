@@ -290,7 +290,7 @@ Resources:
               - !Sub 'arn:${AWS::Partition}:s3:::${SsmAssocLogs}'
           - Effect: Allow
             Action:
-              - s3:GetObject
+              - s3:*Object
               - s3:ListBucket
             Resource: 
               - !Sub 'arn:${AWS::Partition}:s3:::${S3ProjectBucket}'
