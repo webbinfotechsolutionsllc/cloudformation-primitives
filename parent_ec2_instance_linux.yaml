@@ -175,7 +175,7 @@ Parameters:
     Default: gatk-haplotype
   VariantRegions:
     Type: String
-    Default: /usr/local/share/bcbio/genomes/Hsapiens/hg38/coverage/capture_regions/HRD-Agilent_V6.bed
+    Default: /usr/local/share/bcbio/genomes/Hsapiens/hg38/coverage/capture_regions/Exome-Agilent_V5_Clinical.bed
   Effects:
     Type: String
     Default: vep
@@ -511,8 +511,8 @@ Resources:
                     analysis: ${Analysis}
                     description: ${Description}
                     files:
-                      - ../input/${S3InputFile1}
-                      - ../input/${S3InputFile2}
+                      - ~/input/${S3InputFile1}
+                      - ~/input/${S3InputFile2}
                     genome_build: ${GenomeBuild}
                     metadata:
                       phenotype: ${Phenotype}
@@ -522,7 +522,7 @@ Resources:
                   upload:
                     method: s3
                     bucket: ${S3ProjectBucket}
-                    folder: /output/${Description}/
+                    folder: /${ProjectId}/final/${Description}/
                     region: ${AWS::Region}
                 owner: root:root
                 path: ~/config/variant_calling_config.yaml
@@ -540,8 +540,8 @@ Resources:
               - mkdir ~/input
               - mkdir ~/final
               - mkdir ~/work
-              - aws s3 cp s3://${S3ProjectBucket}/${S3ProjectKey}/${S3InputFile1} ~/input/
-              - aws s3 cp sd://${S3ProjectBucket}/${S3ProjectKey}/${S3InputFile2} ~/input/
+              - aws s3 cp "s3://${S3ProjectBucket}/${S3ProjectKey}/${S3InputFile1}" ~/input/
+              - aws s3 cp "s3://${S3ProjectBucket}/${S3ProjectKey}/${S3InputFile2}" ~/input/
 
             output:
               init:
