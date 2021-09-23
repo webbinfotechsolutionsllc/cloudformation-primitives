@@ -522,7 +522,7 @@ Resources:
                   upload:
                     method: s3
                     bucket: ${S3ProjectBucket}
-                    folder: /${ProjectId}/final/${Description}/
+                    folder: /${ProjectId}/bcbio/final/${Description}/
                     region: ${AWS::Region}
                 owner: root:root
                 path: ~/config/variant_calling_config.yaml
@@ -540,8 +540,8 @@ Resources:
               - mkdir ~/input
               - mkdir ~/final
               - mkdir ~/work
-              - aws s3 cp "s3://${S3ProjectBucket}/${S3ProjectKey}/${S3InputFile1}" ~/input/
-              - aws s3 cp "s3://${S3ProjectBucket}/${S3ProjectKey}/${S3InputFile2}" ~/input/
+              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile1}" ~/input/
+              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile2}" ~/input/
 
             output:
               init:
