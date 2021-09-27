@@ -111,8 +111,8 @@ Parameters:
     Type: AWS::EC2::Subnet::Id
   LatestAmiId:
     Description: Region specific image from the Parameter Store. This is maintained by AWS and will dynamically point to the latest Amazon Linux 2 AMI.
-    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
-    Default: /aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base
+    Type: AWS::EC2::Image::Id
+    Default: ami-0b18ca1a93b538109
   InstanceKeyName:
     Type: String
     Default: <keyName>
