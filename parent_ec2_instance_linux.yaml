@@ -528,7 +528,7 @@ Resources:
                     method: s3
                     dir: ~/final
                     bucket: ${S3ProjectBucket}
-                    folder: /${ProjectId}/bcbio/final/${Description}/
+                    folder: ${ProjectId}/bcbio/final/${Description}/
                     region: ${AWS::Region}
                     reduced_redundancy: false
                 owner: root:root
