@@ -460,7 +460,7 @@ Resources:
                   {
                     "file_path": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log",
                     "log_group_name": "amazon-cloudwatch-agent.log",
-                    "log_stream_name": "${EnvironmentId}-${ProjectId}-{instance_id}"
+                    "log_stream_name": "${EnvironmentId}-${ProjectId}-${!aws:InstanceId}"
                   }
                 ]
               }
@@ -549,8 +549,8 @@ Resources:
               - mkdir ~/work
               - mkdir ~/config
               - mv ~/variant_calling_config.yaml ~/config/variant_calling_config.yaml
-              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile1}" ~/input/
-              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile2}" ~/input/
+              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/{instance_id}/${S3InputFile1}" ~/input/
+              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/{instance_id}/${S3InputFile2}" ~/input/
 
             output:
               init:
