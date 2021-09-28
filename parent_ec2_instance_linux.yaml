@@ -521,11 +521,13 @@ Resources:
                       cores: ${Cores}
                   upload:
                     method: s3
+                    dir: ~/final
                     bucket: ${S3ProjectBucket}
                     folder: /${ProjectId}/bcbio/final/${Description}/
                     region: ${AWS::Region}
+                    reduced_redundancy: false
                 owner: root:root
-                path: ~/config/variant_calling_config.yaml
+                path: ~/variant_calling_config.yaml
                 permissions: '0660'
 
             # Run shell commands
@@ -540,6 +542,8 @@ Resources:
               - mkdir ~/input
               - mkdir ~/final
               - mkdir ~/work
+              - mkdir ~/config
+              - mv ~/variant_calling_config.yaml ~/config/variant_calling_config.yaml
               - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile1}" ~/input/
               - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile2}" ~/input/
 
