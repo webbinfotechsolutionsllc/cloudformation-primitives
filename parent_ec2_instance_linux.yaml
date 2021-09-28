@@ -549,8 +549,8 @@ Resources:
               - mkdir ~/work
               - mkdir ~/config
               - mv ~/variant_calling_config.yaml ~/config/variant_calling_config.yaml
-              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/{instance_id}/${S3InputFile1}" ~/input/
-              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/{instance_id}/${S3InputFile2}" ~/input/
+              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/$AWS_INSTANCE_ID/${S3InputFile1}" ~/input/
+              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/$AWS_INSTANCE_ID/${S3InputFile2}" ~/input/
 
             output:
               init:
