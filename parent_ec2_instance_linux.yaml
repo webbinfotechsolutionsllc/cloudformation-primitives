@@ -415,9 +415,7 @@ Resources:
             # Install packages
             package_upgrade: false
             packages:
-              - curl
-              - wget
-              - unzip
+              - git
 
             # Run shell commands
             runcmd:
