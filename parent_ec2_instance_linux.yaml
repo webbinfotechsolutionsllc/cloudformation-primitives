@@ -528,7 +528,7 @@ Resources:
                     method: s3
                     dir: ~/final
                     bucket: ${S3ProjectBucket}
-                    folder: ${ProjectId}/bcbio/final/${Description}/
+                    folder: ${ProjectId}/bcbio/final/${Description}-${Analysis}-${VariantRegions}
                     region: ${AWS::Region}
                     reduced_redundancy: false
                 owner: root:root
@@ -549,8 +549,8 @@ Resources:
               - mkdir ~/work
               - mkdir ~/config
               - mv ~/variant_calling_config.yaml ~/config/variant_calling_config.yaml
-              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/$AWS_INSTANCE_ID/${S3InputFile1}" ~/input/
-              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/$AWS_INSTANCE_ID/${S3InputFile2}" ~/input/
+              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile1}" ~/input/
+              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile2}" ~/input/
 
             output:
               init:
