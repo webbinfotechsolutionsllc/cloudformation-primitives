@@ -126,7 +126,7 @@ Parameters:
     Default: <keyName>
   S3ProjectBucket:
     Type: String
-    Default: "<bucket>"
+    Default: <bucket>
   EnvironmentId:
     Type: String
     Default: <env>
@@ -426,7 +426,12 @@ Resources:
               - NETWORK_INTERFACE_IDS=$(aws ec2 describe-instances --region $AWS_REGION --instance-id $AWS_INSTANCE_ID --output text --query Reservations[0].Instances[0].NetworkInterfaces[0].NetworkInterfaceId)
               - aws ec2 create-tags --resources $ROOT_VOLUME_IDS --region $AWS_REGION --tags Key=Name,Value=${ProjectId}-${EnvironmentId} Key=ProjectId,Value=${ProjectId} Key=Contact,Value=${Contact} Key=Compliance,Value=${Compliance} Key=Confidentiality,Value=${Confidentiality}
               - aws ec2 create-tags --resources $NETWORK_INTERFACE_IDS --region $AWS_REGION --tags Key=Name,Value=${ProjectId}-${EnvironmentId} Key=ProjectId,Value=${ProjectId} Key=Contact,Value=${Contact} Key=Compliance,Value=${Compliance} Key=Confidentiality,Value=${Confidentiality}
- 
+              - pip3 install argparse pandas gooey requests boto3
+              - git config --global user.name $AWS_INSTANCE_ID
+              - git config --global user.email ${Contact}
+              - git config --global credential.helper '!aws codecommit credential-helper $@'
+              - git config --global credential.UseHttpPath true
+              
             output:
               init:
                 output: "> /var/log/cloud-init.out"
