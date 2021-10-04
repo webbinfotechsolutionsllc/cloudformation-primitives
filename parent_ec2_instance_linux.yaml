@@ -31,7 +31,10 @@ Metadata:
           - InstanceType
           - DisableTermination
           - InstanceMonitoring
+          - CodeCommitRepo
           - S3ProjectBucket
+          - S3DataBucket
+
       - Label:
           default: Tags
         Parameters:
@@ -127,6 +130,12 @@ Parameters:
   S3ProjectBucket:
     Type: String
     Default: <bucket>
+  S3DataBucket:
+    Type: String
+    Default: <bucket>
+  CodeCommitRepo:
+    Type: String
+    Default: <repo>
   EnvironmentId:
     Type: String
     Default: <env>
@@ -230,7 +239,7 @@ Resources:
           Value: !Ref Compliance
   InstanceS3Policy:
     Type: AWS::IAM::ManagedPolicy
-    Properties: 
+    Properties:
       Description: Policy granting the minimum S3 rights necessary for SSM functionality. This replaces the use of arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM. Also includes any necessary rights to other S3 resources.
       PolicyDocument:
         Version: '2012-10-17'
@@ -252,19 +261,65 @@ Resources:
               - s3:PutObject
               - s3:PutObjectAcl
               - s3:ListBucket
-            Resource: 
+            Resource:
               - !Sub 'arn:${AWS::Partition}:s3:::${SsmAssocLogs}/*'
               - !Sub 'arn:${AWS::Partition}:s3:::${SsmAssocLogs}'
           - Effect: Allow
             Action:
-              - s3:GetObject
               - s3:ListBucket
-            Resource: 
+            Resource:
               - !Sub 'arn:${AWS::Partition}:s3:::${S3ProjectBucket}'
+          - Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:DeleteObject
+              - s3:DeleteObjectVersion
+            Resource:
               - !Sub 'arn:${AWS::Partition}:s3:::${S3ProjectBucket}/${ProjectId}/*'
-  InstanceEc2Policy:
+  InstanceCodeCommitPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties: 
+      Description: Policy granting CodeCommit repo rights to a specific repo.
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - codecommit:BatchGetRepositories
+              - codecommit:CreateBranch
+              - codecommit:CreateRepository
+              - codecommit:Get*
+              - codecommit:GitPull
+              - codecommit:GitPush
+              - codecommit:List*
+              - codecommit:Put*
+              - codecommit:Post*
+              - codecommit:Merge*
+              - codecommit:TagResource
+              - codecommit:Test*
+              - codecommit:UntagResource
+              - codecommit:Update*
+            Resource:
+              - !Sub 'arn:aws:codecommit:us-east-1:${AWS::AccountId}:${CodeCommitRepo}'
+          - Effect: Allow
+            Action:
+              - s3:ListBucket
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3DataBucket}'
+          - Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:DeleteObject
+              - s3:DeleteObjectVersion
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3DataBucket}/*'
+  InstanceEc2Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
       Description: Policy granting access to create tags on volumes
       PolicyDocument:
         Version: '2012-10-17'
