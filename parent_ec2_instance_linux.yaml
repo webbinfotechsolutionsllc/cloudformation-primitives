@@ -34,6 +34,7 @@ Metadata:
           - CodeCommitRepo
           - S3ProjectBucket
           - S3DataBucket
+          - S3DataKey
 
       - Label:
           default: Tags
@@ -133,6 +134,9 @@ Parameters:
   S3DataBucket:
     Type: String
     Default: <bucket>
+  S3DataKey:
+    Type: String
+    Default: <key>
   CodeCommitRepo:
     Type: String
     Default: <repo>
@@ -278,6 +282,20 @@ Resources:
               - s3:DeleteObjectVersion
             Resource:
               - !Sub 'arn:${AWS::Partition}:s3:::${S3ProjectBucket}/${ProjectId}/*'
+          - Effect: Allow
+            Action:
+              - s3:ListBucket
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3DataBucket}'
+          - Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:DeleteObject
+              - s3:DeleteObjectVersion
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3DataBucket}/${S3DataKey}/*'
   InstanceCodeCommitPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties: 
@@ -303,20 +321,6 @@ Resources:
               - codecommit:Update*
             Resource:
               - !Sub 'arn:aws:codecommit:us-east-1:${AWS::AccountId}:${CodeCommitRepo}'
-          - Effect: Allow
-            Action:
-              - s3:ListBucket
-            Resource:
-              - !Sub 'arn:${AWS::Partition}:s3:::${S3DataBucket}'
-          - Effect: Allow
-            Action:
-              - s3:PutObject
-              - s3:GetObject
-              - s3:GetObjectVersion
-              - s3:DeleteObject
-              - s3:DeleteObjectVersion
-            Resource:
-              - !Sub 'arn:${AWS::Partition}:s3:::${S3DataBucket}/*'
   InstanceEc2Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -344,6 +348,7 @@ Resources:
         - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
         - !Ref InstanceS3Policy
         - !Ref InstanceEc2Policy
+        - !Ref InstanceCodeCommitPolicy
       MaxSessionDuration: 14400
       AssumeRolePolicyDocument:
         Statement:
@@ -433,7 +438,7 @@ Resources:
                   {
                     "file_path": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log",
                     "log_group_name": "amazon-cloudwatch-agent.log",
-                    "log_stream_name": "${EnvironmentId}-${ProjectId}-{instance_id}"
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   }
                 ]
               }
@@ -470,6 +475,7 @@ Resources:
             # Install packages
             package_upgrade: false
             packages:
+              - gtk3
               - git
 
             # Run shell commands
@@ -481,12 +487,8 @@ Resources:
               - NETWORK_INTERFACE_IDS=$(aws ec2 describe-instances --region $AWS_REGION --instance-id $AWS_INSTANCE_ID --output text --query Reservations[0].Instances[0].NetworkInterfaces[0].NetworkInterfaceId)
               - aws ec2 create-tags --resources $ROOT_VOLUME_IDS --region $AWS_REGION --tags Key=Name,Value=${ProjectId}-${EnvironmentId} Key=ProjectId,Value=${ProjectId} Key=Contact,Value=${Contact} Key=Compliance,Value=${Compliance} Key=Confidentiality,Value=${Confidentiality}
               - aws ec2 create-tags --resources $NETWORK_INTERFACE_IDS --region $AWS_REGION --tags Key=Name,Value=${ProjectId}-${EnvironmentId} Key=ProjectId,Value=${ProjectId} Key=Contact,Value=${Contact} Key=Compliance,Value=${Compliance} Key=Confidentiality,Value=${Confidentiality}
-              - pip3 install argparse pandas gooey requests boto3
-              - git config --global user.name $AWS_INSTANCE_ID
-              - git config --global user.email ${Contact}
-              - git config --global credential.helper '!aws codecommit credential-helper $@'
-              - git config --global credential.UseHttpPath true
-              
+              - yum -y groupinstall "Development Tools"
+
             output:
               init:
                 output: "> /var/log/cloud-init.out"
