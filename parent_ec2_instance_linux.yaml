@@ -460,7 +460,47 @@ Resources:
                   {
                     "file_path": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log",
                     "log_group_name": "amazon-cloudwatch-agent.log",
-                    "log_stream_name": "${EnvironmentId}-${ProjectId}-${!aws:InstanceId}"
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                  },
+                  {
+                    "file_path": "~/log/bcbio-nextgen-commands.log",
+                    "log_group_name": "bcbio-nextgen-commands.log",
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                  },
+                  {
+                    "file_path": "~/log/bcbio-nextgen-debug.log",
+                    "log_group_name": "bcbio-nextgen-debug.log",
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                  },
+                  {
+                    "file_path": "~/log/bcbio-nextgen.log",
+                    "log_group_name": "bcbio-nextgen.log",
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                  },
+                  {
+                    "file_path": "/var/log/cloud-init.out",
+                    "log_group_name": "cloud-init.out",
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                  },
+                  {
+                    "file_path": "/var/log/cloud-init.err",
+                    "log_group_name": "cloud-init.err",
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                  },
+                  {
+                    "file_path": "/var/log/cloud-config.log",
+                    "log_group_name": "cloud-config.log",
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                  },
+                  {
+                    "file_path": "/var/log/cloud-final.out",
+                    "log_group_name": "cloud-final.out",
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                  },
+                  {
+                    "file_path": "/var/log/cloud-final.err",
+                    "log_group_name": "cloud-final.err",
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
                   }
                 ]
               }
@@ -531,8 +571,8 @@ Resources:
                     folder: ${ProjectId}/bcbio/final/${Description}-${Analysis}-${VariantRegions}
                     region: ${AWS::Region}
                     reduced_redundancy: false
-                owner: root:root
-                path: ~/variant_calling_config.yaml
+                owner: ec2-user:wheel
+                path: /home/ec2-user/variant_calling_config.yaml
                 permissions: '0660'
 
             # Run shell commands
@@ -544,13 +584,16 @@ Resources:
               - NETWORK_INTERFACE_IDS=$(aws ec2 describe-instances --region $AWS_REGION --instance-id $AWS_INSTANCE_ID --output text --query Reservations[0].Instances[0].NetworkInterfaces[0].NetworkInterfaceId)
               - aws ec2 create-tags --resources $ROOT_VOLUME_IDS --region $AWS_REGION --tags Key=Name,Value=${ProjectId}-${EnvironmentId} Key=ProjectId,Value=${ProjectId} Key=Contact,Value=${Contact} Key=Compliance,Value=${Compliance} Key=Confidentiality,Value=${Confidentiality}
               - aws ec2 create-tags --resources $NETWORK_INTERFACE_IDS --region $AWS_REGION --tags Key=Name,Value=${ProjectId}-${EnvironmentId} Key=ProjectId,Value=${ProjectId} Key=Contact,Value=${Contact} Key=Compliance,Value=${Compliance} Key=Confidentiality,Value=${Confidentiality}
-              - mkdir ~/input
-              - mkdir ~/final
-              - mkdir ~/work
-              - mkdir ~/config
-              - mv ~/variant_calling_config.yaml ~/config/variant_calling_config.yaml
-              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile1}" ~/input/
-              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile2}" ~/input/
+              - mkdir /home/ec2-user/input
+              - chown ec2-user:ec2-user /home/ec2-user/input
+              - mkdir /home/ec2-user/config
+              - chown ec2-user:ec2-user /home/ec2-user/config
+              - mv /home/ec2-user/variant_calling_config.yaml /home/ec2-user/config/variant_calling_config.yaml
+              - chown ec2-user:ec2-user /home/ec2-user/config/variant_calling_config.yaml
+              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile1}" /home/ec2-user/input/
+              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile2}" /home/ec2-user/input/
+              - chown ec2-user:ec2-user /home/ec2-user/input/${S3InputFile1}
+              - chown ec2-user:ec2-user /home/ec2-user/input/${S3InputFile2}
 
             output:
               init:
