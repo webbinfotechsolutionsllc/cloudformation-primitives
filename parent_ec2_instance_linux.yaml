@@ -566,7 +566,7 @@ Resources:
                       cores: ${Cores}
                   upload:
                     method: s3
-                    dir: ~/final
+                    dir: final
                     bucket: ${S3ProjectBucket}
                     folder: ${ProjectId}/bcbio/final/${Description}-${Analysis}-${VariantRegions}
                     region: ${AWS::Region}
