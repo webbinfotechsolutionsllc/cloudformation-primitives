@@ -460,47 +460,47 @@ Resources:
                   {
                     "file_path": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log",
                     "log_group_name": "amazon-cloudwatch-agent.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
-                    "file_path": "~/log/bcbio-nextgen-commands.log",
+                    "file_path": "/home/ec2-user/log/bcbio-nextgen-commands.log",
                     "log_group_name": "bcbio-nextgen-commands.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
-                    "file_path": "~/log/bcbio-nextgen-debug.log",
+                    "file_path": "/home/ec2-user/log/bcbio-nextgen-debug.log",
                     "log_group_name": "bcbio-nextgen-debug.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
-                    "file_path": "~/log/bcbio-nextgen.log",
+                    "file_path": "/home/ec2-user/log/bcbio-nextgen.log",
                     "log_group_name": "bcbio-nextgen.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
                     "file_path": "/var/log/cloud-init.out",
                     "log_group_name": "cloud-init.out",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
                     "file_path": "/var/log/cloud-init.err",
                     "log_group_name": "cloud-init.err",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
                     "file_path": "/var/log/cloud-config.log",
                     "log_group_name": "cloud-config.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
                     "file_path": "/var/log/cloud-final.out",
                     "log_group_name": "cloud-final.out",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
                     "file_path": "/var/log/cloud-final.err",
                     "log_group_name": "cloud-final.err",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-${!aws:InstanceId}"
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   }
                 ]
               }
@@ -571,7 +571,7 @@ Resources:
                     folder: ${ProjectId}/bcbio/final/${Description}-${Analysis}-${VariantRegions}
                     region: ${AWS::Region}
                     reduced_redundancy: false
-                owner: ec2-user:wheel
+                owner: ec2-user:ec2-user
                 path: /home/ec2-user/variant_calling_config.yaml
                 permissions: '0660'
 
@@ -589,7 +589,6 @@ Resources:
               - mkdir /home/ec2-user/config
               - chown ec2-user:ec2-user /home/ec2-user/config
               - mv /home/ec2-user/variant_calling_config.yaml /home/ec2-user/config/variant_calling_config.yaml
-              - chown ec2-user:ec2-user /home/ec2-user/config/variant_calling_config.yaml
               - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile1}" /home/ec2-user/input/
               - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile2}" /home/ec2-user/input/
               - chown ec2-user:ec2-user /home/ec2-user/input/${S3InputFile1}
