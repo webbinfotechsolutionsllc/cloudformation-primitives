@@ -32,7 +32,8 @@ Metadata:
           - DisableTermination
           - InstanceMonitoring
           - S3ProjectBucket
-          - S3ProjectKey
+          - S3DataBucket
+          - S3DataKey
       - Label:
           default: BCBIO Config Parameters
         Parameters:
@@ -146,7 +147,10 @@ Parameters:
   S3ProjectBucket:
     Type: String
     Default: <bucket>
-  S3ProjectKey:
+  S3DataBucket:
+    Type: String
+    Default: <bucket>
+  S3DataKey:
     Type: String
     Default: <key>
   Aligner:
@@ -344,6 +348,28 @@ Resources:
               - s3:DeleteObjectVersion
             Resource:
               - !Sub 'arn:${AWS::Partition}:s3:::${S3ProjectBucket}/${ProjectId}/*'
+  DataS3Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties: 
+      Description: Policy granting the instance rights in S3 to data buckets.
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:ListBucket
+            Resource: 
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3DataBucket}'
+          - Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:DeleteObject
+              - s3:DeleteObjectVersion
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3DataBucket}/${S3DataKey}/*'
+              - !Sub 'arn:${AWS::Partition}:s3:::${S3DataBucket}/${ProjectId}/bcbio/final/*'
   InstanceEc2Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties: 
@@ -463,17 +489,17 @@ Resources:
                     "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
-                    "file_path": "/home/ec2-user/log/bcbio-nextgen-commands.log",
+                    "file_path": "/home/ec2-user/work/log/bcbio-nextgen-commands.log",
                     "log_group_name": "bcbio-nextgen-commands.log",
                     "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
-                    "file_path": "/home/ec2-user/log/bcbio-nextgen-debug.log",
+                    "file_path": "/home/ec2-user/work/log/bcbio-nextgen-debug.log",
                     "log_group_name": "bcbio-nextgen-debug.log",
                     "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
-                    "file_path": "/home/ec2-user/log/bcbio-nextgen.log",
+                    "file_path": "/home/ec2-user/work/log/bcbio-nextgen.log",
                     "log_group_name": "bcbio-nextgen.log",
                     "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
@@ -500,6 +526,16 @@ Resources:
                   {
                     "file_path": "/var/log/cloud-final.err",
                     "log_group_name": "cloud-final.err",
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
+                  },
+                  {
+                    "file_path": "/home/ec2-user/bcbio-stdout.log",
+                    "log_group_name": "bcbio-stdout.log",
+                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
+                  },
+                  {
+                    "file_path": "/home/ec2-user/bcbio-stderr.log",
+                    "log_group_name": "bcbio-stderr.log",
                     "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   }
                 ]
@@ -556,8 +592,8 @@ Resources:
                     analysis: ${Analysis}
                     description: ${Description}
                     files:
-                      - ~/input/${S3InputFile1}
-                      - ~/input/${S3InputFile2}
+                      - /home/ec2-user/input/${S3InputFile1}
+                      - /home/ec2-user/input/${S3InputFile2}
                     genome_build: ${GenomeBuild}
                     metadata:
                       phenotype: ${Phenotype}
@@ -567,8 +603,8 @@ Resources:
                   upload:
                     method: s3
                     dir: final
-                    bucket: ${S3ProjectBucket}
-                    folder: ${ProjectId}/bcbio/final/${Description}-${Analysis}-${VariantRegions}
+                    bucket: ${S3DataBucket}
+                    folder: ${ProjectId}/bcbio/final/${Description}-${Analysis}-${GenomeBuild}
                     region: ${AWS::Region}
                     reduced_redundancy: false
                 owner: ec2-user:ec2-user
@@ -589,8 +625,8 @@ Resources:
               - mkdir /home/ec2-user/config
               - chown ec2-user:ec2-user /home/ec2-user/config
               - mv /home/ec2-user/variant_calling_config.yaml /home/ec2-user/config/variant_calling_config.yaml
-              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile1}" /home/ec2-user/input/
-              - aws s3 cp "s3://${S3ProjectBucket}/${ProjectId}/${S3ProjectKey}/${S3InputFile2}" /home/ec2-user/input/
+              - aws s3 cp "s3://${S3DataBucket}/${S3DataKey}/${S3InputFile1}" /home/ec2-user/input/
+              - aws s3 cp "s3://${S3DataBucket}/${S3DataKey}/${S3InputFile2}" /home/ec2-user/input/
               - chown ec2-user:ec2-user /home/ec2-user/input/${S3InputFile1}
               - chown ec2-user:ec2-user /home/ec2-user/input/${S3InputFile2}
 
