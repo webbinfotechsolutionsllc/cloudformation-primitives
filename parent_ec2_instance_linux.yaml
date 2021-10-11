@@ -397,6 +397,7 @@ Resources:
         - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
         - !Ref InstanceS3Policy
         - !Ref InstanceEc2Policy
+        - !Ref DataS3Policy
       MaxSessionDuration: 14400
       AssumeRolePolicyDocument:
         Statement:
