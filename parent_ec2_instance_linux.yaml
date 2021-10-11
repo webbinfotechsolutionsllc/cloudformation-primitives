@@ -489,17 +489,17 @@ Resources:
                     "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
-                    "file_path": "/home/ec2-user/work/log/bcbio-nextgen-commands.log",
+                    "file_path": "/home/ec2-user/log/bcbio-nextgen-commands.log",
                     "log_group_name": "bcbio-nextgen-commands.log",
                     "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
-                    "file_path": "/home/ec2-user/work/log/bcbio-nextgen-debug.log",
+                    "file_path": "/home/ec2-user/log/bcbio-nextgen-debug.log",
                     "log_group_name": "bcbio-nextgen-debug.log",
                     "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
                   {
-                    "file_path": "/home/ec2-user/work/log/bcbio-nextgen.log",
+                    "file_path": "/home/ec2-user/log/bcbio-nextgen.log",
                     "log_group_name": "bcbio-nextgen.log",
                     "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
                   },
