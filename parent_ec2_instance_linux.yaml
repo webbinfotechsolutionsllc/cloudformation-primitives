@@ -604,7 +604,7 @@ Resources:
                     method: s3
                     dir: final
                     bucket: ${S3DataBucket}
-                    folder: ${ProjectId}/bcbio/final/${Description}-${Analysis}-${GenomeBuild}
+                    folder: ${ProjectId}/bcbio/final/${AWS::StackName}
                     region: ${AWS::Region}
                     reduced_redundancy: false
                 owner: ec2-user:ec2-user
