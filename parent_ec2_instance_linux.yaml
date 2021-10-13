@@ -236,6 +236,17 @@ Resources:
         ToPort: 31000
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
       TimeoutInMinutes: 15
+  InstanceSgIngress6:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
+        FromPort: 18080
+        ToPort: 18080
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
   SsmAssocLogs:
     Type: AWS::CloudFormation::Stack
     Properties:
