@@ -195,6 +195,28 @@ Resources:
         ToPort: 3389
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
       TimeoutInMinutes: 15
+  InstanceSgIngress3:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
+        FromPort: 8090
+        ToPort: 8090
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
+  InstanceSgIngress4:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
+        FromPort: 27000
+        ToPort: 27009
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
   SsmAssocLogs:
     Type: AWS::CloudFormation::Stack
     Properties:
