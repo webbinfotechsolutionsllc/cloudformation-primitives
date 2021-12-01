@@ -65,8 +65,8 @@ Parameters:
     Default: Allows access to required application ports on the EC2 instance.
   PrefixListId:
     Description: Prefix List ID used in Instance Security Group
-    Type: String
-    Default: <prefixlistid>
+    Type: CommaDelimitedList
+    Default: <prefixlistid1>,<prefixlistid2>,...
   EbsVolumeSize:
     Description: EBS volume size
     Type: Number
@@ -179,7 +179,7 @@ Resources:
       Parameters:
         IpProtocol: tcp
         GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
-        SourcePrefixListId: !Ref PrefixListId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
         FromPort: 443
         ToPort: 443
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
@@ -190,7 +190,7 @@ Resources:
       Parameters:
         IpProtocol: tcp
         GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
-        SourcePrefixListId: !Ref PrefixListId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
         FromPort: 3389
         ToPort: 3389
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
