@@ -110,7 +110,7 @@ Parameters:
     Description: Instance Subnet.
     Type: AWS::EC2::Subnet::Id
   LatestAmiId:
-    Description: Region specific image from the Parameter Store. This is maintained by AWS and will dynamically point to the latest Amazon Linux 2 AMI.
+    Description: Region-specific AMI.
     Type: AWS::EC2::Image::Id
     Default: ami-0b18ca1a93b538109
   InstanceKeyName:
