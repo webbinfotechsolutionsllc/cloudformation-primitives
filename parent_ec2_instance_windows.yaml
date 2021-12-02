@@ -399,6 +399,21 @@ Resources:
                     "file_path": "c:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\Logs\\test.log",
                     "log_group_name": "test.log",
                     "timezone": "Local"
+                  },
+                  {
+                    "file_path": "c:\\Program Files (x86)\\FlexNet Publisher License Server Manager\\logs\\lmadmin.log",
+                    "log_group_name": "lmadmin.log",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "c:\\Program Files (x86)\\FlexNet Publisher License Server Manager\\logs\\web.log",
+                    "log_group_name": "web.log",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "c:\\Program Files (x86)\\FlexNet Publisher License Server Manager\\logs\\access.log",
+                    "log_group_name": "access.log",
+                    "timezone": "Local"
                   }
                 ]
               },
