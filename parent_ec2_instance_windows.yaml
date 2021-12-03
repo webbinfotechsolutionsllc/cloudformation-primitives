@@ -405,7 +405,7 @@ Resources:
                 ]
               }
             },
-            "log_stream_name": "${EnvironmentId}-${ProjectId}-${Instance}""
+            "log_stream_name": "${EnvironmentId}-${ProjectId}-${Instance}"
           }
         }
       Description: Instance CloudWatch agent configuration
