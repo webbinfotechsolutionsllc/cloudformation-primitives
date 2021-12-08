@@ -217,6 +217,17 @@ Resources:
         ToPort: 27009
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
       TimeoutInMinutes: 15
+  InstanceSgIngress5:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        IpProtocol: tcp
+        GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
+        FromPort: 61667
+        ToPort: 61667
+      TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
+      TimeoutInMinutes: 15
   SsmAssocLogs:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -413,6 +424,11 @@ Resources:
                   {
                     "file_path": "c:\\Program Files (x86)\\FlexNet Publisher License Server Manager\\logs\\access.log",
                     "log_group_name": "access.log",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "c:\\Program Files (x86)\\FlexNet Publisher License Server Manager\\logs\\simplus.log",
+                    "log_group_name": "simplus.log",
                     "timezone": "Local"
                   }
                 ]
