@@ -41,13 +41,13 @@ Parameters:
     Description: Ingress rule FromPort.
     Type: Number
     Default: 443
-    MinValue: 0
+    MinValue: -1
     MaxValue: 65535
   ToPort:
     Description: Ingress rule ToPort.
     Type: Number
     Default: 443
-    MinValue: 0
+    MinValue: -1
     MaxValue: 65535
 Conditions:
   HasSourceSecurityGroupId: !Not [!Equals [!Ref SourceSecurityGroupId, '']]
