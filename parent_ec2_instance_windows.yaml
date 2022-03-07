@@ -66,8 +66,8 @@ Parameters:
     Default: Allows access to required application ports on the EC2 instance.
   PrefixListId:
     Description: Prefix List ID used in Instance Security Group
-    Type: String
-    Default: <prefixlistid>
+    Type: CommaDelimitedList
+    Default: <prefixlistid1>,<prefixlistid2>,...
   EbsVolumeSize:
     Description: EBS volume size
     Type: Number
@@ -111,9 +111,9 @@ Parameters:
     Description: Instance Subnet.
     Type: AWS::EC2::Subnet::Id
   LatestAmiId:
-    Description: Region specific image from the Parameter Store. This is maintained by AWS and will dynamically point to the latest Amazon Linux 2 AMI.
-    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
-    Default: /aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base
+    Description: Region-specific AMI.
+    Type: AWS::EC2::Image::Id
+    Default: ami-0b18ca1a93b538109
   InstanceKeyName:
     Type: String
     Default: <keyName>
@@ -180,7 +180,7 @@ Resources:
       Parameters:
         IpProtocol: tcp
         GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
-        SourcePrefixListId: !Ref PrefixListId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
         FromPort: 443
         ToPort: 443
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
@@ -191,7 +191,7 @@ Resources:
       Parameters:
         IpProtocol: tcp
         GroupId: !GetAtt InstanceSg.Outputs.SecurityGroupId
-        SourcePrefixListId: !Ref PrefixListId
+        SourcePrefixListId: !Select [ 0, !Ref PrefixListId ]
         FromPort: 3389
         ToPort: 3389
       TemplateURL: !Sub ${NestedTemplateBaseUrl}${SecurityGroupIngressTemplate}
@@ -500,7 +500,7 @@ Resources:
             $AWS_INSTANCE_ID=(Invoke-WebRequest -Uri 'http://169.254.169.254/latest/meta-data/instance-id' -UseBasicParsing).Content
             $ROOT_VOLUME_IDS=((Get-EC2Instance -Region $AWS_REGION -InstanceId $AWS_INSTANCE_ID).Instances.BlockDeviceMappings | where-object DeviceName -match '/dev/sda1').Ebs.VolumeId
             $NETWORK_INTERFACE_IDS=(Get-EC2Instance -Region $AWS_REGION -InstanceId $AWS_INSTANCE_ID).Instances.NetworkInterfaces.NetworkInterfaceId
-            $tag = @( @{key="Name";value="${ProjectId}-${EnvironmentId}"}, @{key="ProjectId";value="${ProjectId}"}, @{key="Contact";value="${Contact}"} )
+            $tag = @( @{key="Name";value="${ProjectId}-${EnvironmentId}"}, @{key="ProjectId";value="${ProjectId}"}, @{key="Contact";value="${Contact}"}, @{key="Compliance";value="${Compliance}"}, @{key="Confidentiality";value="${Confidentiality}"} )
             New-EC2Tag -Resource $ROOT_VOLUME_IDS -Region $AWS_REGION -Tag $tag
             New-EC2Tag -Resource $NETWORK_INTERFACE_IDS -Region $AWS_REGION -Tag $tag
             </powershell>
