@@ -386,20 +386,11 @@ Resources:
                     "event_name": "System",
                     "event_levels": [
                       "INFORMATION",
-                      "ERROR"
-                    ],
-                    "log_group_name": "System",
-                    "log_stream_name": "System",
-                    "event_format": "xml"
-                  },
-                  {
-                    "event_name": "CustomizedName",
-                    "event_levels": [
                       "WARNING",
                       "ERROR"
                     ],
-                    "log_group_name": "CustomizedLogGroup",
-                    "log_stream_name": "CustomizedLogStream",
+                    "log_group_name": "System",
+                    "log_stream_name": "${AWS::StackName}",
                     "event_format": "xml"
                   }
                 ]
