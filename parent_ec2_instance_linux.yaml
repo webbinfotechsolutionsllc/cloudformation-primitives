@@ -428,43 +428,43 @@ Resources:
                 "collect_list": [
                   {
                     "file_path": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log",
-                    "log_group_name": "amazon-cloudwatch-agent.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
+                    "log_group_name": "/${ProjectId}/${EnvironmentId}/amazon-cloudwatch-agent.log",
+                    "log_stream_name": "{instance_id}"
                   },
                   {
                     "file_path": "/opt/certara/d360/logs/access.log",
-                    "log_group_name": "d360-access.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
+                    "log_group_name": "/${ProjectId}/${EnvironmentId}/access.log",
+                    "log_stream_name": "{instance_id}"
                   },
                   {
                     "file_path": "/opt/certara/d360/logs/activity.log",
-                    "log_group_name": "d360-activity.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
+                    "log_group_name": "/${ProjectId}/${EnvironmentId}/activity.log",
+                    "log_stream_name": "{instance_id}"
                   },
                   {
                     "file_path": "/opt/certara/d360/logs/audit.log",
-                    "log_group_name": "d360-audit.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
+                    "log_group_name": "/${ProjectId}/${EnvironmentId}/audit.log",
+                    "log_stream_name": "{instance_id}"
                   },
                   {
                     "file_path": "/opt/certara/d360/logs/authentication.log",
-                    "log_group_name": "d360-authentication.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
+                    "log_group_name": "/${ProjectId}/${EnvironmentId}/authentication.log",
+                    "log_stream_name": "{instance_id}"
                   },
                   {
                     "file_path": "/opt/certara/d360/logs/client_metrics.log",
-                    "log_group_name": "d360-client_metrics.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
+                    "log_group_name": "/${ProjectId}/${EnvironmentId}/client_metrics.log",
+                    "log_stream_name": "{instance_id}"
                   },
                   {
                     "file_path": "/opt/certara/d360/logs/server.log",
-                    "log_group_name": "d360-server.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
+                    "log_group_name": "/${ProjectId}/${EnvironmentId}/server.log",
+                    "log_stream_name": "{instance_id}"
                   },
                   {
                     "file_path": "/opt/certara/d360/logs/stats.log",
-                    "log_group_name": "d360-stats.log",
-                    "log_stream_name": "${ProjectId}-${EnvironmentId}-{instance_id}"
+                    "log_group_name": "/${ProjectId}/${EnvironmentId}/stats.log",
+                    "log_stream_name": "{instance_id}"
                   }
                 ]
               }
