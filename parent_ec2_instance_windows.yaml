@@ -437,12 +437,14 @@ Resources:
                 "collect_list": [
                   {
                     "file_path": "c:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\Logs\\amazon-cloudwatch-agent.log",
-                    "log_group_name": "amazon-cloudwatch-agent.log",
+                    "log_group_name": "/aws/cloudwatch/amazon-cloudwatch-agent.log",
+                    "log_stream_name": "{instance_id}",
                     "timezone": "UTC"
                   },
                   {
                     "file_path": "c:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\Logs\\test.log",
-                    "log_group_name": "test.log",
+                    "log_group_name": "/aws/cloudwatch/test.log",
+                    "log_stream_name": "{instance_id}",
                     "timezone": "Local"
                   }
                 ]
@@ -456,14 +458,13 @@ Resources:
                       "WARNING",
                       "ERROR"
                     ],
-                    "log_group_name": "System",
-                    "log_stream_name": "${AWS::StackName}",
+                    "log_group_name": "/${ProjectId}/${EnvironmentId}/System",
+                    "log_stream_name": "{instance_id}",
                     "event_format": "xml"
                   }
                 ]
               }
-            },
-            "log_stream_name": "${AWS::StackName}"
+            }
           }
         }
       Description: Instance CloudWatch agent configuration
