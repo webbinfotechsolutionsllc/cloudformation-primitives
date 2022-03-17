@@ -33,6 +33,12 @@ Metadata:
           - InstanceMonitoring
           - S3ProjectBucket
       - Label:
+          default: Spotfire Parameters
+        Parameters:
+          - MajorVer
+          - MinorVer
+          - PatchVer
+      - Label:
           default: Tags
         Parameters:
           - EnvironmentId
@@ -120,6 +126,18 @@ Parameters:
   S3ProjectBucket:
     Type: String
     Default: "<bucket>"
+  MajorVer:
+    Description: Spotfire Server Major Version
+    Type: Number
+    Default: 11
+  MinorVer:
+    Description: Spotfire Server Minor Version
+    Type: Number
+    Default: 4
+  PatchVer:
+    Description: Spotfire Server Patch Version
+    Type: Number
+    Default: 1
   EnvironmentId:
     Type: String
     Default: <env>
@@ -383,9 +401,9 @@ Resources:
               "Processor": {
                 "measurement": [
                   {"name": "% Idle Time", "rename": "CPU_IDLE", "unit": "Percent"},
-                  "% Interrupt Time",
-                  "% User Time",
-                  "% Processor Time"
+                  {"name": "% Interrupt Time", "unit": "Percent"},
+                  {"name": "% User Time", "unit": "Percent"}
+                  {"name": "% Processor Time", "unit": "Percent"}
                 ],
                 "resources": [
                   "*"
@@ -394,8 +412,9 @@ Resources:
               "LogicalDisk": {
                 "measurement": [
                   {"name": "% Idle Time", "unit": "Percent"},
-                  {"name": "% Disk Read Time", "rename": "DISK_READ"},
-                  "% Disk Write Time"
+                  {"name": "% Disk Read Time", "rename": "DISK_READ", "unit": "Percent"},
+                  {"name": "% Disk Write Time","rename": "DISK_WRITE", "unit": "Percent"},
+                  {"name": "% Free Space", "unit": "Percent"}
                 ],
                 "resources": [
                   "*"
@@ -439,11 +458,119 @@ Resources:
                     "file_path": "c:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\Logs\\amazon-cloudwatch-agent.log",
                     "log_group_name": "/aws/cloudwatch/amazon-cloudwatch-agent.log",
                     "log_stream_name": "{instance_id}",
-                    "timezone": "UTC"
+                    "timezone": "Local"
                   },
                   {
                     "file_path": "c:\\ProgramData\\Amazon\\AmazonCloudWatchAgent\\Logs\\test.log",
                     "log_group_name": "/aws/cloudwatch/test.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tsnm\\${MajorVer}.${MinorVer}.${PatchVer}\\nm\\logs\\nm.log",
+                    "log_group_name": "/tibco/spotfire/nodemanager/logs/nm.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tsnm\\${MajorVer}.${MinorVer}.${PatchVer}\\nm\\logs\\startup.log",
+                    "log_group_name": "/tibco/spotfire/nodemanager/logs/startup.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tsnm\\${MajorVer}.${MinorVer}.${PatchVer}\\nm\\logs\\service-*.log",
+                    "log_group_name": "/tibco/spotfire/nodemanager/logs/service.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tsnm\\${MajorVer}.${MinorVer}.${PatchVer}\\nm\\logs\\Spotfire.Dxp.Worker.Host.*.log",
+                    "log_group_name": "/tibco/spotfire/nodemanager/logs/Spotfire.Dxp.Worker.Host.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\Program Files\\TIBCO\\statsvcs${MajorVer}${MinorVer}\\SplusServer\\tomcat\\logs\\catalina.log",
+                    "log_group_name": "/tibco/spotfire/nodemanager/logs/catalina.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\Program Files\\TIBCO\\statsvcs${MajorVer}${MinorVer}\\SplusServer\\tomcat\\logs\\commons-daemon.log",
+                    "log_group_name": "/tibco/spotfire/nodemanager/logs/commons-daemon.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\Program Files\\TIBCO\\statsvcs${MajorVer}${MinorVer}\\SplusServer\\tomcat\\logs\\SplusServer.log",
+                    "log_group_name": "/tibco/spotfire/nodemanager/logs/SplusServer.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\Program Files\\TIBCO\\statsvcs${MajorVer}${MinorVer}\\SplusServer\\tomcat\\logs\\SplusServerAccess.log",
+                    "log_group_name": "/tibco/spotfire/nodemanager/logs/SplusServerAccess.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tss\\${MajorVer}.${MinorVer}.${PatchVer}\\tomcat\\logs\\actionlogs\\actionlog.log",
+                    "log_group_name": "/tibco/spotfire/server/tomcat/logs/actionlogs/actionlog.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tss\\${MajorVer}.${MinorVer}.${PatchVer}\\tomcat\\logs\\access.log",
+                    "log_group_name": "/tibco/spotfire/server/tomcat/logs/access.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tss\\${MajorVer}.${MinorVer}.${PatchVer}\\tomcat\\logs\\catalina.log",
+                    "log_group_name": "/tibco/spotfire/server/tomcat/logs/catalina.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tss\\${MajorVer}.${MinorVer}.${PatchVer}\\tomcat\\logs\\ignite.server.log",
+                    "log_group_name": "/tibco/spotfire/server/tomcat/logs/ignite.server.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tss\\${MajorVer}.${MinorVer}.${PatchVer}\\tomcat\\logs\\library.log",
+                    "log_group_name": "/tibco/spotfire/server/tomcat/logs/library.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tss\\${MajorVer}.${MinorVer}.${PatchVer}\\tomcat\\logs\\server-diagnostics.log",
+                    "log_group_name": "/tibco/spotfire/server/tomcat/logs/server-diagnostics.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tss\\${MajorVer}.${MinorVer}.${PatchVer}\\tomcat\\logs\\server.log",
+                    "log_group_name": "/tibco/spotfire/server/tomcat/logs/server.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tss\\${MajorVer}.${MinorVer}.${PatchVer}\\tomcat\\logs\\sessions.log",
+                    "log_group_name": "/tibco/spotfire/server/tomcat/logs/sessions.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tss\\${MajorVer}.${MinorVer}.${PatchVer}\\tomcat\\logs\\startup.log",
+                    "log_group_name": "/tibco/spotfire/server/tomcat/logs/startup.log",
+                    "log_stream_name": "{instance_id}",
+                    "timezone": "Local"
+                  },
+                  {
+                    "file_path": "C:\\tibco\\tss\\${MajorVer}.${MinorVer}.${PatchVer}\\tomcat\\logs\\usage.log",
+                    "log_group_name": "/tibco/spotfire/server/tomcat/logs/usage.log",
                     "log_stream_name": "{instance_id}",
                     "timezone": "Local"
                   }
